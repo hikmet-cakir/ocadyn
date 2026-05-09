@@ -1,2 +1,3 @@
 rootProject.name = 'ocadyn'
 include 'auth-service'
+include 'user-service'
