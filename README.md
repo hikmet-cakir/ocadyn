@@ -92,38 +92,25 @@ Users can paste any product link from any shopping site to instantly preview pro
 
 ```
 ocadyn/
-├── apps/
-│   ├── web/                  # Frontend application
-│   │   ├── components/       # UI components
-│   │   ├── pages/            # Page views
-│   │   └── services/         # API clients
-│   │
-│   └── api/                  # Backend API
-│       ├── routes/           # API endpoints
-│       ├── services/
-│       │   ├── scraper/      # Site-specific scrapers
-│       │   ├── tracker/      # Tracking business logic
-│       │   └── mailer/       # Email delivery service
-│       ├── models/           # Database models
-│       └── jobs/             # Scheduled jobs
-│
-├── packages/
-│   └── shared/               # Shared types and utility functions
-│
-├── infra/                    # Infrastructure config (Docker, CI/CD)
-└── docs/                     # Project documentation
+├── services/                 # Backend (Gradle multi-module monorepo)
+│   ├── auth-service/
+│   ├── user-service/
+│   ├── notification-service/
+│   └── scraper-service/
+├── docs/                     # Project documentation
+└── README.md
 ```
+
+Planned top-level folders (not in repo yet): `frontend/`, `infra/`.
 
 ---
 
 ## ⚙️ Tech Stack
 
-### Backend
-- **Node.js / TypeScript** — API server
-- **PostgreSQL** — Primary database (products, users, trackers, price history)
-- **Redis** — Queue management and caching
-- **BullMQ** — Job scheduling and queue system
-- **Playwright / Cheerio** — Web scraping engine
+### Backend (`services/`)
+- **Java 21** — Runtime
+- **Spring Boot 3.3** — Microservices (auth, user, notification, scraper)
+- **Gradle** — Multi-project build
 
 ### Frontend
 - **Next.js** — Application framework
@@ -140,37 +127,28 @@ ocadyn/
 
 ### Prerequisites
 
-- Node.js >= 18
-- PostgreSQL >= 14
-- Redis >= 6
-- Docker (optional)
+- **JDK 21**
+- **Gradle** (wrapper included under `services/`)
 
-### Installation
+### Backend build & run
 
 ```bash
-# Clone the repository
 git clone https://github.com/your-org/ocadyn.git
-cd ocadyn
+cd ocadyn/services
 
-# Install dependencies
-npm install
+# Build all modules
+./gradlew clean build
 
-# Set up environment variables
-cp .env.example .env
-# Edit the .env file with your own configuration
-
-# Run database migrations
-npm run db:migrate
-
-# Start the development server
-npm run dev
+# Run a single service (example)
+./gradlew :auth-service:bootRun
 ```
 
-### Running with Docker
-
-```bash
-docker compose up -d
-```
+| Service | Default port |
+|---------|--------------|
+| auth-service | 9090 |
+| notification-service | 9091 |
+| user-service | 9092 |
+| scraper-service | 9092 |
 
 ---
 
