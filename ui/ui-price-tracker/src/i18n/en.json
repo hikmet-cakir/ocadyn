@@ -1,0 +1,325 @@
+{
+  "app": {
+    "name": "OCADYN",
+    "tagline": "Track products. Buy at the right time."
+  },
+  "nav": {
+    "home": "Home",
+    "watchlist": "Watchlist",
+    "notifications": "Notifications",
+    "favorites": "Favorites",
+    "reports": "Reports",
+    "settings": "Account Settings",
+    "help": "Support & Help"
+  },
+  "common": {
+    "getStarted": "Start Tracking",
+    "viewDashboard": "View Dashboard",
+    "language": "Language",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "landing": {
+    "heroBadge": "Smart price alerts",
+    "heroTitle": "Smart price tracking for every marketplace",
+    "heroSubtitle": "Paste a product URL, set your alert rules, and never miss a price drop again.",
+    "membersRequired": "Create a free account to track prices. Tracking is available for registered members only.",
+    "alreadyMember": "Already have an account?",
+    "nav": {
+      "features": "Features",
+      "pricing": "Pricing",
+      "faq": "FAQ"
+    },
+    "marketplaces": {
+      "title": "Works with leading marketplaces"
+    },
+    "features": {
+      "title": "Everything you need to buy at the right price",
+      "subtitle": "A modern dashboard built for shoppers who want clarity, not clutter.",
+      "items": {
+        "url": {
+          "title": "Paste any product URL",
+          "description": "Add products from Amazon, Trendyol, Hepsiburada, and more in seconds."
+        },
+        "alerts": {
+          "title": "Flexible alert rules",
+          "description": "Email, SMS, call, or push — with percentage and fixed amount triggers."
+        },
+        "tracking": {
+          "title": "Real-time tracking",
+          "description": "See price drops, increases, and history on a clean timeline."
+        },
+        "reports": {
+          "title": "Savings reports",
+          "description": "Understand how much you save over time with visual analytics."
+        }
+      }
+    },
+    "preview": {
+      "title": "Your command center for prices",
+      "subtitle": "Track every product in one place with stats, alerts, and history at a glance.",
+      "points": {
+        "stats": "Overview cards for total, dropped, and increased prices",
+        "alerts": "Notification center for every price change",
+        "history": "Per-product charts and alert configuration"
+      }
+    },
+    "pricing": {
+      "title": "Simple, transparent pricing",
+      "subtitle": "Start free. Upgrade when you need more products and faster checks.",
+      "popular": "Most popular",
+      "perMonth": "/mo",
+      "plans": {
+        "free": {
+          "name": "Free",
+          "description": "For casual shoppers",
+          "price": "$0",
+          "feature1": "Up to 5 tracked products",
+          "feature2": "Email alerts",
+          "feature3": "Daily price checks",
+          "cta": "Get started"
+        },
+        "pro": {
+          "name": "Pro",
+          "description": "For serious deal hunters",
+          "price": "$9",
+          "feature1": "Unlimited products",
+          "feature2": "All alert channels",
+          "feature3": "Hourly price checks",
+          "cta": "Start Pro trial"
+        },
+        "enterprise": {
+          "name": "Enterprise",
+          "description": "For teams and resellers",
+          "price": "$49",
+          "feature1": "Team accounts",
+          "feature2": "API access",
+          "feature3": "Priority support",
+          "cta": "Contact sales"
+        }
+      }
+    },
+    "testimonials": {
+      "title": "Loved by smart shoppers",
+      "items": {
+        "a": {
+          "quote": "OCADYN saved me over $200 on electronics last quarter. The alerts are spot on.",
+          "name": "Sarah K.",
+          "role": "Early adopter"
+        },
+        "b": {
+          "quote": "Finally one dashboard for Trendyol and Amazon. Setup took two minutes.",
+          "name": "Mehmet A.",
+          "role": "Power user"
+        },
+        "c": {
+          "quote": "The price history chart helped me decide exactly when to buy.",
+          "name": "James L.",
+          "role": "Bargain hunter"
+        }
+      }
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "items": {
+        "account": {
+          "q": "Do I need an account to track prices?",
+          "a": "Yes. Price tracking is available for registered members only. Create a free account to get started."
+        },
+        "track": {
+          "q": "How do I add a product?",
+          "a": "Sign in, go to your dashboard, paste the product URL, and configure your alert preferences on the product page."
+        },
+        "alerts": {
+          "q": "How often are prices checked?",
+          "a": "You choose the frequency: hourly, every 6 or 12 hours, daily, or weekly — per product."
+        },
+        "pricing": {
+          "q": "Is there a free plan?",
+          "a": "Yes. The Free plan includes up to 5 products with email alerts and daily checks."
+        }
+      }
+    },
+    "cta": {
+      "title": "Ready to never overpay again?",
+      "subtitle": "Join thousands of members tracking prices smarter.",
+      "button": "Create free account"
+    },
+    "footer": {
+      "product": "Product",
+      "stores": "Supported stores",
+      "rights": "All rights reserved."
+    }
+  },
+  "auth": {
+    "backToHome": "Back to home",
+    "logout": "Log out",
+    "fields": {
+      "name": "Full name",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm password"
+    },
+    "login": {
+      "title": "Welcome back",
+      "subtitle": "Sign in to manage your tracked products and alerts.",
+      "submit": "Sign in",
+      "noAccount": "Don't have an account?",
+      "signUp": "Create account"
+    },
+    "register": {
+      "title": "Create your account",
+      "subtitle": "Register to start tracking prices across marketplaces.",
+      "submit": "Create account",
+      "hasAccount": "Already have an account?",
+      "signIn": "Sign in"
+    },
+    "errors": {
+      "invalidCredentials": "Please enter a valid email and password.",
+      "passwordMismatch": "Passwords do not match.",
+      "passwordTooShort": "Password must be at least 6 characters.",
+      "registrationFailed": "Registration failed. Please check your details."
+    }
+  },
+  "dashboard": {
+    "welcome": "Hello, {{name}}!",
+    "homeSubtitle": "Track prices, get alerts, and save on every purchase.",
+    "searchPlaceholder": "Search products…",
+    "comingSoon": "More options coming soon.",
+    "stats": {
+      "total": "Total tracked",
+      "dropped": "Price dropped",
+      "increased": "Price increased",
+      "unchanged": "Unchanged"
+    },
+    "quickAdd": {
+      "title": "Track a product",
+      "description": "Paste a product URL from any supported marketplace.",
+      "placeholder": "https://amazon.com/dp/…",
+      "submit": "Track product"
+    },
+    "recentProducts": {
+      "title": "Recently tracked",
+      "description": "Your latest products and price changes.",
+      "viewAll": "View all",
+      "product": "Product",
+      "marketplace": "Store",
+      "price": "Price",
+      "change": "Change",
+      "tracking": "Tracking",
+      "empty": "No products yet. Add a URL above to start tracking."
+    },
+    "products": {
+      "subtitle": "Manage all products you are tracking.",
+      "emptyTitle": "No products found",
+      "tabs": {
+        "all": "All",
+        "active": "Active",
+        "paused": "Paused"
+      }
+    },
+    "favorites": {
+      "subtitle": "Products you marked as favorites.",
+      "empty": "No favorites yet. Add a product to favorites from its detail page."
+    },
+    "notifications": {
+      "subtitle": "{{count}} unread alerts",
+      "markAllRead": "Mark all as read",
+      "empty": "No notifications in this category.",
+      "drop": "Price drop",
+      "rise": "Price increase",
+      "tabs": {
+        "all": "All",
+        "drop": "Price drops",
+        "rise": "Price increases"
+      }
+    },
+    "reports": {
+      "subtitle": "Savings overview and analytics.",
+      "avgSavings": "Average savings",
+      "totalAlerts": "Total alerts",
+      "topMarketplace": "Top marketplace",
+      "successRate": "Alert success rate",
+      "chartTitle": "Savings over time",
+      "savings": "Savings"
+    },
+    "settings": {
+      "subtitle": "Profile, notifications, security, and appearance.",
+      "save": "Save changes",
+      "profileDesc": "Update your personal information.",
+      "notificationsDesc": "Default alert preferences for new products.",
+      "securityDesc": "Password and account security.",
+      "appearanceDesc": "Theme and language preferences.",
+      "changePassword": "Update password",
+      "tabs": {
+        "profile": "Profile",
+        "notifications": "Notifications",
+        "security": "Security",
+        "appearance": "Appearance"
+      }
+    },
+    "help": {
+      "subtitle": "Find answers to common questions.",
+      "categories": "Topics",
+      "search": "Search FAQ…",
+      "faq": {
+        "track": {
+          "q": "How do I track a product?",
+          "a": "Sign in, paste a product URL on the dashboard, and configure your alert rules on the product detail page."
+        },
+        "alerts": {
+          "q": "How do price alerts work?",
+          "a": "Set percentage or fixed amount triggers and choose how often we check prices. You will be notified when conditions are met."
+        },
+        "marketplaces": {
+          "q": "Which stores are supported?",
+          "a": "Amazon, Trendyol, Hepsiburada, N11, Walmart, Alibaba, and Sahibinden are supported in this demo."
+        },
+        "account": {
+          "q": "Do I need an account?",
+          "a": "Yes. Price tracking is available for registered members only. Create a free account to get started."
+        }
+      }
+    },
+    "product": {
+      "notFound": "Product not found",
+      "notFoundDesc": "This product is not in your watchlist.",
+      "lowest": "Lowest",
+      "highest": "Highest",
+      "historyTitle": "Price history",
+      "noHistory": "No price history yet.",
+      "range7d": "7 days",
+      "range30d": "30 days",
+      "range90d": "90 days",
+      "rangeAll": "All time",
+      "alertSettings": "Alert settings",
+      "alertSettingsDesc": "Choose how and when you want to be notified.",
+      "notifyVia": "Notify me via",
+      "channels": {
+        "email": "Email",
+        "sms": "SMS",
+        "phone": "Call",
+        "push": "Push"
+      },
+      "percentDrop": "Drop % threshold",
+      "percentRise": "Rise % threshold",
+      "fixedDrop": "Drop $ amount",
+      "fixedRise": "Rise $ amount",
+      "frequency": "Check frequency",
+      "frequencyOptions": {
+        "hourly": "Hourly",
+        "6h": "Every 6h",
+        "12h": "Every 12h",
+        "daily": "Daily",
+        "weekly": "Weekly"
+      },
+      "saveAlerts": "Save alert settings",
+      "saved": "Alert settings saved.",
+      "viewOnStore": "View on store",
+      "favorite": "Add to favorites",
+      "unfavorite": "Remove from favorites"
+    }
+  }
+}

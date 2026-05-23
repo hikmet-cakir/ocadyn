@@ -1,0 +1,18 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'OCADYN — Smart Price Tracking for Every Marketplace',
+  description =
+    'Track product prices on Amazon, Trendyol, Hepsiburada and more. Get alerts when prices drop. Free account required.',
+} = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+  <slot />
+</BaseLayout>

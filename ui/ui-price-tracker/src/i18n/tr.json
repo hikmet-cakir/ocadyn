@@ -1,0 +1,325 @@
+{
+  "app": {
+    "name": "OCADYN",
+    "tagline": "Ürünleri takip edin. Doğru zamanda alın."
+  },
+  "nav": {
+    "home": "Ana Sayfa",
+    "watchlist": "Takip Listem",
+    "notifications": "Bildirimler",
+    "favorites": "Favoriler",
+    "reports": "Raporlar",
+    "settings": "Hesap Ayarları",
+    "help": "Destek & Yardım"
+  },
+  "common": {
+    "getStarted": "Takibe Başla",
+    "viewDashboard": "Paneli Görüntüle",
+    "language": "Dil",
+    "theme": "Tema",
+    "light": "Açık",
+    "dark": "Koyu",
+    "system": "Sistem"
+  },
+  "landing": {
+    "heroBadge": "Akıllı fiyat uyarıları",
+    "heroTitle": "Her pazaryeri için akıllı fiyat takibi",
+    "heroSubtitle": "Ürün URL'sini yapıştırın, uyarı kurallarınızı belirleyin, indirimleri kaçırmayın.",
+    "membersRequired": "Fiyat takibi için ücretsiz hesap oluşturun. Takip yalnızca kayıtlı üyeler içindir.",
+    "alreadyMember": "Zaten hesabınız var mı?",
+    "nav": {
+      "features": "Özellikler",
+      "pricing": "Fiyatlandırma",
+      "faq": "SSS"
+    },
+    "marketplaces": {
+      "title": "Önde gelen pazaryerleriyle uyumlu"
+    },
+    "features": {
+      "title": "Doğru fiyattan almak için ihtiyacınız olan her şey",
+      "subtitle": "Karmaşıklık değil, netlik isteyen alışveriş yapanlar için modern panel.",
+      "items": {
+        "url": {
+          "title": "Herhangi bir ürün URL'si",
+          "description": "Amazon, Trendyol, Hepsiburada ve daha fazlasından saniyeler içinde ürün ekleyin."
+        },
+        "alerts": {
+          "title": "Esnek uyarı kuralları",
+          "description": "E-posta, SMS, arama veya push — yüzde ve sabit tutar tetikleyicileri."
+        },
+        "tracking": {
+          "title": "Anlık takip",
+          "description": "Fiyat düşüşlerini, artışlarını ve geçmişi tek zaman çizgisinde görün."
+        },
+        "reports": {
+          "title": "Tasarruf raporları",
+          "description": "Görsel analizlerle zaman içinde ne kadar tasarruf ettiğinizi anlayın."
+        }
+      }
+    },
+    "preview": {
+      "title": "Fiyatlar için komuta merkeziniz",
+      "subtitle": "İstatistikler, uyarılar ve geçmiş tek bakışta.",
+      "points": {
+        "stats": "Toplam, düşen ve artan fiyatlar için özet kartlar",
+        "alerts": "Her fiyat değişimi için bildirim merkezi",
+        "history": "Ürün başına grafikler ve uyarı yapılandırması"
+      }
+    },
+    "pricing": {
+      "title": "Basit, şeffaf fiyatlandırma",
+      "subtitle": "Ücretsiz başlayın. Daha fazla ürün ve hızlı kontrol için yükseltin.",
+      "popular": "En popüler",
+      "perMonth": "/ay",
+      "plans": {
+        "free": {
+          "name": "Ücretsiz",
+          "description": "Günlük alışveriş için",
+          "price": "₺0",
+          "feature1": "5 ürüne kadar takip",
+          "feature2": "E-posta uyarıları",
+          "feature3": "Günlük fiyat kontrolü",
+          "cta": "Başla"
+        },
+        "pro": {
+          "name": "Pro",
+          "description": "Ciddi fırsat avcıları için",
+          "price": "₺299",
+          "feature1": "Sınırsız ürün",
+          "feature2": "Tüm uyarı kanalları",
+          "feature3": "Saatlik fiyat kontrolü",
+          "cta": "Pro'yu dene"
+        },
+        "enterprise": {
+          "name": "Kurumsal",
+          "description": "Ekipler ve satıcılar için",
+          "price": "₺999",
+          "feature1": "Ekip hesapları",
+          "feature2": "API erişimi",
+          "feature3": "Öncelikli destek",
+          "cta": "Satış ile görüş"
+        }
+      }
+    },
+    "testimonials": {
+      "title": "Akıllı alışveriş yapanların tercihi",
+      "items": {
+        "a": {
+          "quote": "OCADYN geçen çeyrekte elektronikte 200$'dan fazla tasarruf sağladı. Uyarılar tam isabet.",
+          "name": "Selin K.",
+          "role": "Erken kullanıcı"
+        },
+        "b": {
+          "quote": "Sonunda Trendyol ve Amazon için tek panel. Kurulum iki dakika sürdü.",
+          "name": "Mehmet A.",
+          "role": "Güç kullanıcısı"
+        },
+        "c": {
+          "quote": "Fiyat geçmişi grafiği tam ne zaman alacağıma karar vermemi sağladı.",
+          "name": "Can L.",
+          "role": "Fırsat avcısı"
+        }
+      }
+    },
+    "faq": {
+      "title": "Sık sorulan sorular",
+      "items": {
+        "account": {
+          "q": "Fiyat takibi için hesap gerekli mi?",
+          "a": "Evet. Fiyat takibi yalnızca kayıtlı üyeler içindir. Ücretsiz hesap oluşturarak başlayın."
+        },
+        "track": {
+          "q": "Ürün nasıl eklenir?",
+          "a": "Giriş yapın, panele gidin, ürün URL'sini yapıştırın ve ürün sayfasında uyarıları yapılandırın."
+        },
+        "alerts": {
+          "q": "Fiyatlar ne sıklıkla kontrol edilir?",
+          "a": "Sıklığı siz seçersiniz: saatlik, 6 veya 12 saatte bir, günlük veya haftalık — ürün başına."
+        },
+        "pricing": {
+          "q": "Ücretsiz plan var mı?",
+          "a": "Evet. Ücretsiz planda 5 ürüne kadar takip, e-posta uyarıları ve günlük kontroller bulunur."
+        }
+      }
+    },
+    "cta": {
+      "title": "Bir daha fazla ödemeye hazır mısınız?",
+      "subtitle": "Fiyatları daha akıllı takip eden binlerce üyeye katılın.",
+      "button": "Ücretsiz hesap oluştur"
+    },
+    "footer": {
+      "product": "Ürün",
+      "stores": "Desteklenen mağazalar",
+      "rights": "Tüm hakları saklıdır."
+    }
+  },
+  "auth": {
+    "backToHome": "Ana sayfaya dön",
+    "logout": "Çıkış yap",
+    "fields": {
+      "name": "Ad soyad",
+      "email": "E-posta",
+      "password": "Şifre",
+      "confirmPassword": "Şifre tekrar"
+    },
+    "login": {
+      "title": "Tekrar hoş geldiniz",
+      "subtitle": "Takip ettiğiniz ürünleri ve uyarıları yönetmek için giriş yapın.",
+      "submit": "Giriş yap",
+      "noAccount": "Hesabınız yok mu?",
+      "signUp": "Hesap oluştur"
+    },
+    "register": {
+      "title": "Hesap oluşturun",
+      "subtitle": "Pazaryerlerinde fiyat takibine başlamak için kayıt olun.",
+      "submit": "Hesap oluştur",
+      "hasAccount": "Zaten hesabınız var mı?",
+      "signIn": "Giriş yap"
+    },
+    "errors": {
+      "invalidCredentials": "Geçerli bir e-posta ve şifre girin.",
+      "passwordMismatch": "Şifreler eşleşmiyor.",
+      "passwordTooShort": "Şifre en az 6 karakter olmalıdır.",
+      "registrationFailed": "Kayıt başarısız. Bilgilerinizi kontrol edin."
+    }
+  },
+  "dashboard": {
+    "welcome": "Merhaba, {{name}}!",
+    "homeSubtitle": "Fiyatları takip edin, uyarı alın, her alışverişte tasarruf edin.",
+    "searchPlaceholder": "Ürün ara…",
+    "comingSoon": "Daha fazla seçenek yakında.",
+    "stats": {
+      "total": "Toplam takip",
+      "dropped": "Fiyat düştü",
+      "increased": "Fiyat arttı",
+      "unchanged": "Değişmedi"
+    },
+    "quickAdd": {
+      "title": "Ürün takip et",
+      "description": "Desteklenen herhangi bir pazaryerinden ürün URL'si yapıştırın.",
+      "placeholder": "https://trendyol.com/…",
+      "submit": "Ürünü takip et"
+    },
+    "recentProducts": {
+      "title": "Son takip edilenler",
+      "description": "En son ürünleriniz ve fiyat değişimleri.",
+      "viewAll": "Tümünü gör",
+      "product": "Ürün",
+      "marketplace": "Mağaza",
+      "price": "Fiyat",
+      "change": "Değişim",
+      "tracking": "Takip",
+      "empty": "Henüz ürün yok. Takibe başlamak için yukarıya URL ekleyin."
+    },
+    "products": {
+      "subtitle": "Takip ettiğiniz tüm ürünleri yönetin.",
+      "emptyTitle": "Ürün bulunamadı",
+      "tabs": {
+        "all": "Tümü",
+        "active": "Aktif",
+        "paused": "Pasif"
+      }
+    },
+    "favorites": {
+      "subtitle": "Favori olarak işaretlediğiniz ürünler.",
+      "empty": "Henüz favori yok. Ürün detay sayfasından favorilere ekleyin."
+    },
+    "notifications": {
+      "subtitle": "{{count}} okunmamış uyarı",
+      "markAllRead": "Tümünü okundu işaretle",
+      "empty": "Bu kategoride bildirim yok.",
+      "drop": "Fiyat düşüşü",
+      "rise": "Fiyat artışı",
+      "tabs": {
+        "all": "Tümü",
+        "drop": "Düşüşler",
+        "rise": "Artışlar"
+      }
+    },
+    "reports": {
+      "subtitle": "Tasarruf özeti ve analizler.",
+      "avgSavings": "Ortalama tasarruf",
+      "totalAlerts": "Toplam uyarı",
+      "topMarketplace": "En çok takip",
+      "successRate": "Uyarı başarı oranı",
+      "chartTitle": "Zaman içinde tasarruf",
+      "savings": "Tasarruf"
+    },
+    "settings": {
+      "subtitle": "Profil, bildirimler, güvenlik ve görünüm.",
+      "save": "Değişiklikleri kaydet",
+      "profileDesc": "Kişisel bilgilerinizi güncelleyin.",
+      "notificationsDesc": "Yeni ürünler için varsayılan uyarı tercihleri.",
+      "securityDesc": "Şifre ve hesap güvenliği.",
+      "appearanceDesc": "Tema ve dil tercihleri.",
+      "changePassword": "Şifreyi güncelle",
+      "tabs": {
+        "profile": "Profil",
+        "notifications": "Bildirimler",
+        "security": "Güvenlik",
+        "appearance": "Görünüm"
+      }
+    },
+    "help": {
+      "subtitle": "Sık sorulan soruların yanıtları.",
+      "categories": "Konular",
+      "search": "SSS ara…",
+      "faq": {
+        "track": {
+          "q": "Ürünü nasıl takip ederim?",
+          "a": "Giriş yapın, panele ürün URL'si yapıştırın ve ürün detay sayfasında uyarı kurallarınızı belirleyin."
+        },
+        "alerts": {
+          "q": "Fiyat uyarıları nasıl çalışır?",
+          "a": "Yüzde veya sabit tutar tetikleyicileri belirleyin ve kontrol sıklığını seçin. Koşullar sağlandığında bilgilendirilirsiniz."
+        },
+        "marketplaces": {
+          "q": "Hangi mağazalar destekleniyor?",
+          "a": "Bu demoda Amazon, Trendyol, Hepsiburada, N11, Walmart, Alibaba ve Sahibinden desteklenmektedir."
+        },
+        "account": {
+          "q": "Hesap gerekli mi?",
+          "a": "Evet. Fiyat takibi yalnızca kayıtlı üyeler içindir. Başlamak için ücretsiz hesap oluşturun."
+        }
+      }
+    },
+    "product": {
+      "notFound": "Ürün bulunamadı",
+      "notFoundDesc": "Bu ürün takip listenizde yok.",
+      "lowest": "En düşük",
+      "highest": "En yüksek",
+      "historyTitle": "Fiyat geçmişi",
+      "noHistory": "Henüz fiyat geçmişi yok.",
+      "range7d": "7 gün",
+      "range30d": "30 gün",
+      "range90d": "90 gün",
+      "rangeAll": "Tümü",
+      "alertSettings": "Uyarı ayarları",
+      "alertSettingsDesc": "Nasıl ve ne zaman bilgilendirilmek istediğinizi seçin.",
+      "notifyVia": "Bildirim kanalları",
+      "channels": {
+        "email": "E-posta",
+        "sms": "SMS",
+        "phone": "Arama",
+        "push": "Push"
+      },
+      "percentDrop": "Düşüş % eşiği",
+      "percentRise": "Artış % eşiği",
+      "fixedDrop": "Düşüş tutarı ($)",
+      "fixedRise": "Artış tutarı ($)",
+      "frequency": "Kontrol sıklığı",
+      "frequencyOptions": {
+        "hourly": "Saatlik",
+        "6h": "6 saatte bir",
+        "12h": "12 saatte bir",
+        "daily": "Günlük",
+        "weekly": "Haftalık"
+      },
+      "saveAlerts": "Uyarıları kaydet",
+      "saved": "Uyarı ayarları kaydedildi.",
+      "viewOnStore": "Mağazada gör",
+      "favorite": "Favorilere ekle",
+      "unfavorite": "Favorilerden çıkar"
+    }
+  }
+}

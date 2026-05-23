@@ -1,0 +1,71 @@
+---
+import '@/styles/global.css';
+import { ClientBootstrap } from '@/components/providers/ClientBootstrap';
+
+interface Props {
+  title?: string;
+  description?: string;
+  noindex?: boolean;
+}
+
+const {
+  title = 'OCADYN — Smart Price Tracking',
+  description = 'Track products across marketplaces and get notified when prices change.',
+  noindex = false,
+} = Astro.props;
+
+const siteUrl = 'https://ocadyn.app';
+const ogImage = `${siteUrl}/favicon.svg`;
+---
+
+<!doctype html>
+<html lang="en" suppressHydrationWarning>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    {noindex ? <meta name="robots" content="noindex, nofollow" /> : null}
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:site_name" content="OCADYN" />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <link rel="canonical" href={siteUrl} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <title>{title}</title>
+    <script is:inline>
+      (function () {
+        const stored = localStorage.getItem('ocadyn-app');
+        let theme = 'system';
+        if (stored) {
+          try {
+            const parsed = JSON.parse(stored);
+            theme = parsed?.state?.theme ?? 'system';
+          } catch (_) {}
+        }
+        const resolved =
+          theme === 'system'
+            ? window.matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'dark'
+              : 'light'
+            : theme;
+        document.documentElement.classList.add(resolved);
+      })();
+    </script>
+  </head>
+  <body>
+    <ClientBootstrap client:only="react" />
+    <slot />
+  </body>
+</html>

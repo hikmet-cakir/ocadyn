@@ -1,0 +1,8 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { LoginForm } from '@/components/auth/LoginForm';
+---
+
+<BaseLayout title="Sign in — OCADYN" noindex={true}>
+  <LoginForm client:load />
+</BaseLayout>

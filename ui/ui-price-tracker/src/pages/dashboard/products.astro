@@ -1,0 +1,8 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { DashboardPage } from '@/components/dashboard/DashboardPage';
+---
+
+<BaseLayout title="Watchlist — OCADYN">
+  <DashboardPage client:load page="products" />
+</BaseLayout>
