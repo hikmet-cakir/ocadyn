@@ -1,0 +1,7 @@
+ocadyn:
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4321,http://localhost:3000,http://ui:4321}
+  tracker:
+    base-url: ${TRACKER_SERVICE_URL:http://tracker-service:9092}
+  notification:
+    base-url: ${NOTIFICATION_SERVICE_URL:http://notification-service:9091}

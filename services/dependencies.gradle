@@ -1,9 +1,21 @@
 ext {
     versions = [
-            springBoot          : '3.3.1'
+            springBoot : '3.3.1',
+            jjwt       : '0.12.6',
+            springdoc  : '2.6.0'
     ]
 
     libs = [
-            springBootStarterWeb            : "org.springframework.boot:spring-boot-starter-web:${versions.springBoot}"
+            springBootStarterWeb       : "org.springframework.boot:spring-boot-starter-web:${versions.springBoot}",
+            springBootStarterDataMongo : "org.springframework.boot:spring-boot-starter-data-mongodb:${versions.springBoot}",
+            springBootStarterSecurity  : "org.springframework.boot:spring-boot-starter-security:${versions.springBoot}",
+            springBootStarterValidation: "org.springframework.boot:spring-boot-starter-validation:${versions.springBoot}",
+            springBootStarterActuator  : "org.springframework.boot:spring-boot-starter-actuator:${versions.springBoot}",
+            springBootStarterTest      : "org.springframework.boot:spring-boot-starter-test:${versions.springBoot}",
+            springBootDevTools         : "org.springframework.boot:spring-boot-devtools:${versions.springBoot}",
+            jjwtApi                    : "io.jsonwebtoken:jjwt-api:${versions.jjwt}",
+            jjwtImpl                   : "io.jsonwebtoken:jjwt-impl:${versions.jjwt}",
+            jjwtJackson                : "io.jsonwebtoken:jjwt-jackson:${versions.jjwt}",
+            springdocOpenapi           : "org.springdoc:springdoc-openapi-starter-webmvc-ui:${versions.springdoc}"
     ]
 }

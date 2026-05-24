@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot'
+    id 'io.spring.dependency-management'
+}
+
+dependencies {
+    implementation libs.springBootStarterWeb
+    implementation libs.springBootStarterDataMongo
+    implementation libs.springBootStarterSecurity
+    implementation libs.springBootStarterValidation
+    implementation libs.springBootStarterActuator
+    implementation libs.springdocOpenapi
+    developmentOnly libs.springBootDevTools
+    testImplementation libs.springBootStarterTest
+    testImplementation 'org.springframework.security:spring-security-test'
+}
+
+springBoot {
+    mainClass = 'com.ocadyn.AuthServiceApplication'
+}
+
+bootJar {
+    archiveFileName = 'auth-service.jar'
+}

@@ -1,0 +1,10 @@
+services
+.git
+.idea
+**/.gradle
+**/build
+**/node_modules
+ui/ui-price-tracker/node_modules
+ui/ui-price-tracker/dist
+*.md
+*.png

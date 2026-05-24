@@ -1,0 +1,11 @@
+dependencies {
+    api libs.springBootStarterWeb
+    api libs.springBootStarterSecurity
+    api libs.springBootStarterValidation
+
+    api libs.jjwtApi
+    runtimeOnly libs.jjwtImpl
+    runtimeOnly libs.jjwtJackson
+
+    compileOnly libs.springBootStarterActuator
+}

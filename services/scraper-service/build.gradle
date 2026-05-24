@@ -1,0 +1,22 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot'
+    id 'io.spring.dependency-management'
+}
+
+dependencies {
+    implementation libs.springBootStarterWeb
+    implementation libs.springBootStarterSecurity
+    implementation libs.springBootStarterValidation
+    implementation libs.springBootStarterActuator
+    developmentOnly libs.springBootDevTools
+    testImplementation libs.springBootStarterTest
+}
+
+springBoot {
+    mainClass = 'com.ocadyn.ScraperServiceApplication'
+}
+
+bootJar {
+    archiveFileName = 'scraper-service.jar'
+}

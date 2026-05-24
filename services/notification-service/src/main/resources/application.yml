@@ -1,2 +1,38 @@
 server:
-  port: 9091
+  port: ${SERVER_PORT:9091}
+
+spring:
+  application:
+    name: notification-service
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://localhost:27017/ocadyn}
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    default-property-inclusion: non_null
+
+ocadyn:
+  jwt:
+    secret: ${JWT_SECRET:ocadyn-dev-secret-key-change-me-in-production-min-32-chars}
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000}
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4321,http://localhost:3000}
+  internal-api:
+    key: ${INTERNAL_API_KEY:ocadyn-internal-dev-key}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+logging:
+  level:
+    com.ocadyn: INFO

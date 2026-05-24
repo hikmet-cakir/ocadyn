@@ -1,5 +1,7 @@
 rootProject.name = 'ocadyn'
+include 'common-lib'
 include 'auth-service'
-include 'user-service'
+include 'tracker-service'
 include 'notification-service'
 include 'scraper-service'
+include 'report-service'

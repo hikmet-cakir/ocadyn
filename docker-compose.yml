@@ -1,0 +1,170 @@
+services:
+  mongodb:
+    image: mongo:7
+    container_name: ocadyn-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  auth-service:
+    build:
+      context: ./services
+      dockerfile: auth-service/Dockerfile
+    container_name: ocadyn-auth-service
+    restart: unless-stopped
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      MONGODB_URI: mongodb://mongodb:27017/ocadyn
+      JWT_SECRET: ${JWT_SECRET:-ocadyn-docker-secret-key-change-in-production-min-32-chars}
+      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-86400000}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:4321,http://localhost:3000,http://ui:4321}
+      INTERNAL_API_KEY: ${INTERNAL_API_KEY:-ocadyn-internal-dev-key}
+      SERVER_PORT: 9090
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9090/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+  tracker-service:
+    build:
+      context: ./services
+      dockerfile: tracker-service/Dockerfile
+    container_name: ocadyn-tracker-service
+    restart: unless-stopped
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      MONGODB_URI: mongodb://mongodb:27017/ocadyn
+      JWT_SECRET: ${JWT_SECRET:-ocadyn-docker-secret-key-change-in-production-min-32-chars}
+      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-86400000}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:4321,http://localhost:3000,http://ui:4321}
+      INTERNAL_API_KEY: ${INTERNAL_API_KEY:-ocadyn-internal-dev-key}
+      SCRAPER_SERVICE_URL: http://scraper-service:9093
+      SERVER_PORT: 9092
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9092/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+  notification-service:
+    build:
+      context: ./services
+      dockerfile: notification-service/Dockerfile
+    container_name: ocadyn-notification-service
+    restart: unless-stopped
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      MONGODB_URI: mongodb://mongodb:27017/ocadyn
+      JWT_SECRET: ${JWT_SECRET:-ocadyn-docker-secret-key-change-in-production-min-32-chars}
+      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-86400000}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:4321,http://localhost:3000,http://ui:4321}
+      INTERNAL_API_KEY: ${INTERNAL_API_KEY:-ocadyn-internal-dev-key}
+      SERVER_PORT: 9091
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+  scraper-service:
+    build:
+      context: ./services
+      dockerfile: scraper-service/Dockerfile
+    container_name: ocadyn-scraper-service
+    restart: unless-stopped
+    depends_on:
+      tracker-service:
+        condition: service_healthy
+      notification-service:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      JWT_SECRET: ${JWT_SECRET:-ocadyn-docker-secret-key-change-in-production-min-32-chars}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:4321,http://localhost:3000,http://ui:4321}
+      INTERNAL_API_KEY: ${INTERNAL_API_KEY:-ocadyn-internal-dev-key}
+      TRACKER_SERVICE_URL: http://tracker-service:9092
+      NOTIFICATION_SERVICE_URL: http://notification-service:9091
+      PRICE_CHECK_DELAY_MS: ${PRICE_CHECK_DELAY_MS:-3600000}
+      SERVER_PORT: 9093
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9093/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+  report-service:
+    build:
+      context: ./services
+      dockerfile: report-service/Dockerfile
+    container_name: ocadyn-report-service
+    restart: unless-stopped
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      MONGODB_URI: mongodb://mongodb:27017/ocadyn
+      JWT_SECRET: ${JWT_SECRET:-ocadyn-docker-secret-key-change-in-production-min-32-chars}
+      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-86400000}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:4321,http://localhost:3000,http://ui:4321}
+      INTERNAL_API_KEY: ${INTERNAL_API_KEY:-ocadyn-internal-dev-key}
+      SERVER_PORT: 9094
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9094/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: ocadyn-nginx
+    restart: unless-stopped
+    depends_on:
+      auth-service:
+        condition: service_healthy
+      tracker-service:
+        condition: service_healthy
+      notification-service:
+        condition: service_healthy
+      report-service:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+
+  ui:
+    build:
+      context: .
+      dockerfile: ui/ui-price-tracker/Dockerfile
+    container_name: ocadyn-ui
+    restart: unless-stopped
+    depends_on:
+      - nginx
+    ports:
+      - "4321:4321"
+
+volumes:
+  mongodb_data:
