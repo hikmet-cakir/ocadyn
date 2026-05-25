@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Package } from 'lucide-react';
 import { EmptyState } from '@/components/common/EmptyState';
 import { Card, CardContent } from '@/components/ui/card';
@@ -15,23 +15,20 @@ type Tab = 'all' | 'active' | 'paused';
 export function ProductsPage() {
   const { t } = useTranslation();
   const products = useProductsStore((s) => s.products);
+  const isLoading = useProductsStore((s) => s.isLoading);
+  const error = useProductsStore((s) => s.error);
+  const loadProducts = useProductsStore((s) => s.loadProducts);
   const toggleTracking = useProductsStore((s) => s.toggleTracking);
   const [tab, setTab] = useState<Tab>('all');
   const [search, setSearch] = useState('');
 
-  const filtered = useMemo(() => {
-    return products.filter((p) => {
-      const matchesTab =
-        tab === 'all' ||
-        (tab === 'active' && p.trackingStatus === 'active') ||
-        (tab === 'paused' && p.trackingStatus === 'paused');
-      const matchesSearch =
-        !search.trim() ||
-        p.title.toLowerCase().includes(search.toLowerCase()) ||
-        p.marketplace.toLowerCase().includes(search.toLowerCase());
-      return matchesTab && matchesSearch;
+  useEffect(() => {
+    const status = tab === 'all' ? undefined : tab;
+    void loadProducts({
+      status,
+      search: search.trim() || undefined,
     });
-  }, [products, tab, search]);
+  }, [tab, search, loadProducts]);
 
   const tabs: { id: Tab; labelKey: string }[] = [
     { id: 'all', labelKey: 'dashboard.products.tabs.all' },
@@ -72,71 +69,77 @@ export function ProductsPage() {
         />
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {filtered.map((product) => (
-          <Card key={product.id} className="overflow-hidden">
-            <CardContent className="p-0">
-              <a href={productDetailHref(product.id)} className="block">
-                <img
-                  src={product.image}
-                  alt=""
-                  className="h-40 w-full object-cover"
-                />
-              </a>
-              <div className="space-y-3 p-4">
-                <div>
-                  <a
-                    href={productDetailHref(product.id)}
-                    className="font-medium hover:text-primary line-clamp-2"
-                  >
-                    {product.title}
-                  </a>
-                  <div className="mt-2">
-                    <MarketplaceBadge marketplace={product.marketplace} />
-                  </div>
-                </div>
-                <div className="flex items-end justify-between">
+      {error ? (
+        <p className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          {error}
+        </p>
+      ) : null}
+
+      {isLoading ? (
+        <p className="py-12 text-center text-muted-foreground">{t('dashboard.loading') ?? 'Loading…'}</p>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {products.map((product) => (
+            <Card key={product.id} className="overflow-hidden">
+              <CardContent className="p-0">
+                <a href={productDetailHref(product.id)} className="block">
+                  <img src={product.image} alt="" className="h-40 w-full object-cover" />
+                </a>
+                <div className="space-y-3 p-4">
                   <div>
-                    <p className="text-lg font-bold">
-                      {formatPrice(product.currentPrice, product.currency)}
-                    </p>
-                    <p
+                    <a
+                      href={productDetailHref(product.id)}
+                      className="font-medium hover:text-primary line-clamp-2"
+                    >
+                      {product.title}
+                    </a>
+                    <div className="mt-2">
+                      <MarketplaceBadge marketplace={product.marketplace} />
+                    </div>
+                  </div>
+                  <div className="flex items-end justify-between">
+                    <div>
+                      <p className="text-lg font-bold">
+                        {formatPrice(product.currentPrice, product.currency)}
+                      </p>
+                      <p
+                        className={cn(
+                          'text-sm font-medium',
+                          product.changePercent < 0 && 'text-success',
+                          product.changePercent > 0 && 'text-destructive',
+                        )}
+                      >
+                        {formatPercent(product.changePercent)}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={product.trackingStatus === 'active'}
+                      onClick={() => void toggleTracking(product.id)}
                       className={cn(
-                        'text-sm font-medium',
-                        product.changePercent < 0 && 'text-success',
-                        product.changePercent > 0 && 'text-destructive',
+                        'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors',
+                        product.trackingStatus === 'active' ? 'bg-primary' : 'bg-muted',
                       )}
                     >
-                      {formatPercent(product.changePercent)}
-                    </p>
+                      <span
+                        className={cn(
+                          'pointer-events-none inline-block size-5 rounded-full bg-white shadow transition-transform',
+                          product.trackingStatus === 'active'
+                            ? 'translate-x-5'
+                            : 'translate-x-0',
+                        )}
+                      />
+                    </button>
                   </div>
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={product.trackingStatus === 'active'}
-                    onClick={() => toggleTracking(product.id)}
-                    className={cn(
-                      'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors',
-                      product.trackingStatus === 'active' ? 'bg-primary' : 'bg-muted',
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        'pointer-events-none inline-block size-5 rounded-full bg-white shadow transition-transform',
-                        product.trackingStatus === 'active'
-                          ? 'translate-x-5'
-                          : 'translate-x-0',
-                      )}
-                    />
-                  </button>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
 
-      {filtered.length === 0 ? (
+      {!isLoading && products.length === 0 ? (
         <EmptyState
           icon={Package}
           title={t('dashboard.products.emptyTitle')}

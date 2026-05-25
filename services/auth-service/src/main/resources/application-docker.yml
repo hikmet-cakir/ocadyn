@@ -5,4 +5,4 @@ spring:
 
 ocadyn:
   cors:
-    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4321,http://localhost:3000,http://ui:4321}
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4321,http://localhost:3000,http://localhost:8080,http://127.0.0.1:8080,http://ui:4321}

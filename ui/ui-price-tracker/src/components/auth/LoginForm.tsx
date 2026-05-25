@@ -11,8 +11,18 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { useTranslation } from '@/hooks/useTranslation';
+import { ApiError } from '@/lib/api-client';
 import { useAuthStore } from '@/store/auth.store';
 import { APP_NAME } from '@/utils/constants';
+
+function getRedirectPath(): string {
+  const params = new URLSearchParams(window.location.search);
+  const redirect = params.get('redirect');
+  if (redirect?.startsWith('/') && !redirect.startsWith('//')) {
+    return redirect;
+  }
+  return '/dashboard';
+}
 
 export function LoginForm() {
   const { t } = useTranslation();
@@ -20,16 +30,25 @@ export function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
-    const ok = login(email, password);
-    if (ok) {
-      window.location.href = '/dashboard';
-      return;
+    setLoading(true);
+
+    try {
+      await login(email, password);
+      window.location.href = getRedirectPath();
+    } catch (err) {
+      if (err instanceof ApiError) {
+        setError(err.message);
+      } else {
+        setError(t('auth.errors.invalidCredentials'));
+      }
+    } finally {
+      setLoading(false);
     }
-    setError(t('auth.errors.invalidCredentials'));
   }
 
   return (
@@ -76,8 +95,8 @@ export function LoginForm() {
                 {error}
               </p>
             ) : null}
-            <Button type="submit" className="w-full" size="lg">
-              {t('auth.login.submit')}
+            <Button type="submit" className="w-full" size="lg" disabled={loading}>
+              {loading ? t('auth.login.submitting') ?? 'Signing in…' : t('auth.login.submit')}
             </Button>
           </form>
 

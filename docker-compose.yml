@@ -27,7 +27,7 @@ services:
       MONGODB_URI: mongodb://mongodb:27017/ocadyn
       JWT_SECRET: ${JWT_SECRET:-ocadyn-docker-secret-key-change-in-production-min-32-chars}
       JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-86400000}
-      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:4321,http://localhost:3000,http://ui:4321}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:4321,http://localhost:3000,http://localhost:8080,http://127.0.0.1:8080,http://ui:4321}
       INTERNAL_API_KEY: ${INTERNAL_API_KEY:-ocadyn-internal-dev-key}
       SERVER_PORT: 9090
     healthcheck:
@@ -51,7 +51,7 @@ services:
       MONGODB_URI: mongodb://mongodb:27017/ocadyn
       JWT_SECRET: ${JWT_SECRET:-ocadyn-docker-secret-key-change-in-production-min-32-chars}
       JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-86400000}
-      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:4321,http://localhost:3000,http://ui:4321}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:4321,http://localhost:3000,http://localhost:8080,http://127.0.0.1:8080,http://ui:4321}
       INTERNAL_API_KEY: ${INTERNAL_API_KEY:-ocadyn-internal-dev-key}
       SCRAPER_SERVICE_URL: http://scraper-service:9093
       SERVER_PORT: 9092
@@ -76,7 +76,7 @@ services:
       MONGODB_URI: mongodb://mongodb:27017/ocadyn
       JWT_SECRET: ${JWT_SECRET:-ocadyn-docker-secret-key-change-in-production-min-32-chars}
       JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-86400000}
-      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:4321,http://localhost:3000,http://ui:4321}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:4321,http://localhost:3000,http://localhost:8080,http://127.0.0.1:8080,http://ui:4321}
       INTERNAL_API_KEY: ${INTERNAL_API_KEY:-ocadyn-internal-dev-key}
       SERVER_PORT: 9091
     healthcheck:
@@ -100,7 +100,7 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
       JWT_SECRET: ${JWT_SECRET:-ocadyn-docker-secret-key-change-in-production-min-32-chars}
-      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:4321,http://localhost:3000,http://ui:4321}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:4321,http://localhost:3000,http://localhost:8080,http://127.0.0.1:8080,http://ui:4321}
       INTERNAL_API_KEY: ${INTERNAL_API_KEY:-ocadyn-internal-dev-key}
       TRACKER_SERVICE_URL: http://tracker-service:9092
       NOTIFICATION_SERVICE_URL: http://notification-service:9091
@@ -127,7 +127,7 @@ services:
       MONGODB_URI: mongodb://mongodb:27017/ocadyn
       JWT_SECRET: ${JWT_SECRET:-ocadyn-docker-secret-key-change-in-production-min-32-chars}
       JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-86400000}
-      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:4321,http://localhost:3000,http://ui:4321}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:4321,http://localhost:3000,http://localhost:8080,http://127.0.0.1:8080,http://ui:4321}
       INTERNAL_API_KEY: ${INTERNAL_API_KEY:-ocadyn-internal-dev-key}
       SERVER_PORT: 9094
     healthcheck:
@@ -150,6 +150,8 @@ services:
         condition: service_healthy
       report-service:
         condition: service_healthy
+      ui:
+        condition: service_started
     ports:
       - "8080:8080"
     volumes:
@@ -159,12 +161,12 @@ services:
     build:
       context: .
       dockerfile: ui/ui-price-tracker/Dockerfile
+      args:
+        PUBLIC_API_BASE_URL: ""
     container_name: ocadyn-ui
     restart: unless-stopped
-    depends_on:
-      - nginx
-    ports:
-      - "4321:4321"
+    expose:
+      - "4321"
 
 volumes:
   mongodb_data:

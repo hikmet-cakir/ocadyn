@@ -1,17 +1,14 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { mockUser } from '@/mock/users';
 import {
   DEFAULT_LOCALE,
   STORAGE_KEYS,
   type SupportedLocale,
 } from '@/utils/constants';
-import type { UserProfile } from '@/types/user.types';
 
 export type ThemeMode = 'light' | 'dark' | 'system';
 
 interface AppState {
-  user: UserProfile;
   theme: ThemeMode;
   locale: SupportedLocale;
   sidebarCollapsed: boolean;
@@ -23,7 +20,6 @@ interface AppState {
 export const useAppStore = create<AppState>()(
   persist(
     (set) => ({
-      user: mockUser,
       theme: 'system',
       locale: DEFAULT_LOCALE,
       sidebarCollapsed: false,

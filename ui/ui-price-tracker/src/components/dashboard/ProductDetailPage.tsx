@@ -18,16 +18,26 @@ import { cn } from '@/utils/cn';
 function ProductDetailContent() {
   const { t } = useTranslation();
   const productId = useProductIdFromUrl();
-  const product = useProductsStore((s) => s.getProductById(productId));
+  const product = useProductsStore((s) => (productId ? s.getProductById(productId) : undefined));
+  const isLoading = useProductsStore((s) => s.isLoading);
+  const error = useProductsStore((s) => s.error);
+  const loadProductById = useProductsStore((s) => s.loadProductById);
   const toggleFavorite = useProductsStore((s) => s.toggleFavorite);
   const updateNotificationSettings = useProductsStore((s) => s.updateNotificationSettings);
   const [draftSettings, setDraftSettings] = useState<NotificationSettings | null>(null);
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState('');
+
+  useEffect(() => {
+    if (!productId) return;
+    void loadProductById(productId);
+  }, [productId, loadProductById]);
 
   useEffect(() => {
     if (product) {
       setDraftSettings(product.notificationSettings);
       setSaved(false);
+      setSaveError('');
     }
   }, [product]);
 
@@ -40,6 +50,12 @@ function ProductDetailContent() {
     );
   }
 
+  if (isLoading && !product) {
+    return (
+      <p className="py-12 text-center text-muted-foreground">{t('dashboard.loading') ?? 'Loading…'}</p>
+    );
+  }
+
   if (!product || !draftSettings) {
     return (
       <PlaceholderPage
@@ -49,15 +65,26 @@ function ProductDetailContent() {
     );
   }
 
-  function handleSave() {
-    if (!product) return;
-    updateNotificationSettings(product.id, draftSettings);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2500);
+  async function handleSave() {
+    if (!product || !draftSettings) return;
+    setSaveError('');
+    try {
+      await updateNotificationSettings(product.id, draftSettings);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2500);
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : 'Failed to save settings');
+    }
   }
 
   return (
     <div className="space-y-6">
+      {error ? (
+        <p className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          {error}
+        </p>
+      ) : null}
+
       <div className="grid gap-6 lg:grid-cols-5">
         <div className="lg:col-span-2 space-y-4">
           <Card className="overflow-hidden">
@@ -70,11 +97,7 @@ function ProductDetailContent() {
                 {t('dashboard.product.viewOnStore')}
               </a>
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => toggleFavorite(product.id)}
-            >
+            <Button variant="outline" size="sm" onClick={() => void toggleFavorite(product.id)}>
               <Heart
                 className={cn('size-4', product.isFavorite && 'fill-destructive text-destructive')}
               />
@@ -120,10 +143,15 @@ function ProductDetailContent() {
           <ProductNotificationForm
             settings={draftSettings}
             onChange={setDraftSettings}
-            onSave={handleSave}
+            onSave={() => void handleSave()}
           />
           {saved ? (
             <p className="text-sm font-medium text-success">{t('dashboard.product.saved')}</p>
+          ) : null}
+          {saveError ? (
+            <p className="text-sm text-destructive" role="alert">
+              {saveError}
+            </p>
           ) : null}
         </div>
       </div>
@@ -143,7 +171,7 @@ function ProductDetailContent() {
 export function ProductDetailPage() {
   const { t } = useTranslation();
   const productId = useProductIdFromUrl();
-  const product = useProductsStore((s) => s.getProductById(productId));
+  const product = useProductsStore((s) => (productId ? s.getProductById(productId) : undefined));
 
   return (
     <AuthGuard>

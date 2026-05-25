@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   BarChart3,
   Bell,
@@ -29,19 +29,10 @@ const faqKeys = ['account', 'track', 'alerts', 'pricing'] as const;
 export function LandingPage() {
   const { t } = useTranslation();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const [hydrated, setHydrated] = useState(false);
+  const isHydrated = useAuthStore((s) => s.isHydrated);
   const [openFaq, setOpenFaq] = useState<string | null>('account');
 
-  useEffect(() => {
-    const finish = () => setHydrated(true);
-    if (useAuthStore.persist.hasHydrated()) {
-      finish();
-      return;
-    }
-    return useAuthStore.persist.onFinishHydration(finish);
-  }, []);
-
-  const dashboardHref = hydrated && isAuthenticated ? '/dashboard' : '/login';
+  const dashboardHref = isHydrated && isAuthenticated ? '/dashboard' : '/login';
 
   return (
     <div className="min-h-screen bg-background">

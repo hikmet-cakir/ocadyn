@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { NotificationCard } from '@/components/notifications/NotificationCard';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -14,14 +15,17 @@ export function NotificationsPage() {
   const { t } = useTranslation();
   const items = useNotificationsStore((s) => s.items);
   const filter = useNotificationsStore((s) => s.filter);
+  const unreadCount = useNotificationsStore((s) => s.unreadCount);
+  const isLoading = useNotificationsStore((s) => s.isLoading);
+  const error = useNotificationsStore((s) => s.error);
   const setFilter = useNotificationsStore((s) => s.setFilter);
+  const loadNotifications = useNotificationsStore((s) => s.loadNotifications);
   const markRead = useNotificationsStore((s) => s.markRead);
   const markAllRead = useNotificationsStore((s) => s.markAllRead);
 
-  const filtered =
-    filter === 'all' ? items : items.filter((n) => n.type === filter);
-
-  const unreadCount = items.filter((n) => !n.read).length;
+  useEffect(() => {
+    void loadNotifications();
+  }, [loadNotifications]);
 
   return (
     <div className="space-y-6">
@@ -33,7 +37,7 @@ export function NotificationsPage() {
           </p>
         </div>
         {unreadCount > 0 ? (
-          <Button variant="outline" size="sm" onClick={markAllRead}>
+          <Button variant="outline" size="sm" onClick={() => void markAllRead()}>
             {t('dashboard.notifications.markAllRead')}
           </Button>
         ) : null}
@@ -57,16 +61,26 @@ export function NotificationsPage() {
         ))}
       </div>
 
-      <div className="space-y-3">
-        {filtered.map((n) => (
-          <NotificationCard key={n.id} notification={n} onRead={markRead} />
-        ))}
-        {filtered.length === 0 ? (
-          <p className="py-12 text-center text-muted-foreground">
-            {t('dashboard.notifications.empty')}
-          </p>
-        ) : null}
-      </div>
+      {error ? (
+        <p className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          {error}
+        </p>
+      ) : null}
+
+      {isLoading ? (
+        <p className="py-12 text-center text-muted-foreground">{t('dashboard.loading') ?? 'Loading…'}</p>
+      ) : (
+        <div className="space-y-3">
+          {items.map((n) => (
+            <NotificationCard key={n.id} notification={n} onRead={(id) => void markRead(id)} />
+          ))}
+          {items.length === 0 ? (
+            <p className="py-12 text-center text-muted-foreground">
+              {t('dashboard.notifications.empty')}
+            </p>
+          ) : null}
+        </div>
+      )}
     </div>
   );
 }

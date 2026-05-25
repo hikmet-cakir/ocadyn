@@ -43,22 +43,26 @@ public class PriceCheckScheduler {
         }
 
         for (ActiveProductResponse product : activeProducts) {
-            BigDecimal next = priceScraperService.simulateNextPrice(product.currentPrice());
-            PriceUpdateResponse update = trackerClient.updatePrice(
-                    product.id(),
-                    new PriceUpdateRequest(next)
-            );
-            if (update != null && update.changed()) {
-                notificationClient.createPriceChangeNotification(new CreatePriceChangeNotificationRequest(
-                        update.userId(),
-                        update.productId(),
-                        update.productTitle(),
-                        update.productImage(),
-                        update.marketplace(),
-                        update.previousPrice(),
-                        update.currentPrice(),
-                        update.currency()
-                ));
+            try {
+                BigDecimal next = priceScraperService.refreshPrice(product.url(), product.currentPrice());
+                PriceUpdateResponse update = trackerClient.updatePrice(
+                        product.id(),
+                        new PriceUpdateRequest(next)
+                );
+                if (update != null && update.changed()) {
+                    notificationClient.createPriceChangeNotification(new CreatePriceChangeNotificationRequest(
+                            update.userId(),
+                            update.productId(),
+                            update.productTitle(),
+                            update.productImage(),
+                            update.marketplace(),
+                            update.previousPrice(),
+                            update.currentPrice(),
+                            update.currency()
+                    ));
+                }
+            } catch (RuntimeException ex) {
+                log.warn("Price refresh failed for product {}: {}", product.id(), ex.getMessage());
             }
         }
     }

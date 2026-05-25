@@ -7,32 +7,28 @@ interface AuthGuardProps {
 
 export function AuthGuard({ children }: AuthGuardProps) {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const [ready, setReady] = useState(false);
+  const isHydrated = useAuthStore((s) => s.isHydrated);
+  const [checked, setChecked] = useState(false);
 
   useEffect(() => {
-    const finish = () => setReady(true);
-    if (useAuthStore.persist.hasHydrated()) {
-      finish();
+    if (!isHydrated) return;
+
+    if (!isAuthenticated) {
+      const redirect = encodeURIComponent(window.location.pathname + window.location.search);
+      window.location.replace(`/login?redirect=${redirect}`);
       return;
     }
-    return useAuthStore.persist.onFinishHydration(finish);
-  }, []);
 
-  useEffect(() => {
-    if (ready && !isAuthenticated) {
-      window.location.replace('/login?redirect=/dashboard');
-    }
-  }, [ready, isAuthenticated]);
+    setChecked(true);
+  }, [isHydrated, isAuthenticated]);
 
-  if (!ready) {
+  if (!isHydrated || !checked) {
     return (
       <div className="flex min-h-screen items-center justify-center text-muted-foreground">
         Loading…
       </div>
     );
   }
-
-  if (!isAuthenticated) return null;
 
   return <>{children}</>;
 }

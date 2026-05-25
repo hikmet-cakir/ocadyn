@@ -12,22 +12,27 @@ export function DashboardHome() {
   const { t } = useTranslation();
   const user = useAuthStore((s) => s.user);
   const products = useProductsStore((s) => s.products);
+  const stats = useProductsStore((s) => s.stats);
+  const isLoading = useProductsStore((s) => s.isLoading);
+  const error = useProductsStore((s) => s.error);
+  const loadProducts = useProductsStore((s) => s.loadProducts);
+  const loadStats = useProductsStore((s) => s.loadStats);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const finish = () => setReady(true);
-    if (useProductsStore.persist.hasHydrated()) {
-      finish();
-      return;
+    async function load() {
+      await Promise.all([loadProducts(), loadStats()]);
+      setReady(true);
     }
-    return useProductsStore.persist.onFinishHydration(finish);
-  }, []);
+    void load();
+  }, [loadProducts, loadStats]);
 
-  const dropped = products.filter((p) => p.changePercent < 0).length;
-  const increased = products.filter((p) => p.changePercent > 0).length;
-  const unchanged = products.filter((p) => p.changePercent === 0).length;
+  const dropped = stats?.dropped ?? products.filter((p) => p.changePercent < 0).length;
+  const increased = stats?.increased ?? products.filter((p) => p.changePercent > 0).length;
+  const unchanged = stats?.unchanged ?? products.filter((p) => p.changePercent === 0).length;
+  const total = stats?.total ?? products.length;
 
-  if (!ready) {
+  if (!ready || isLoading) {
     return <DashboardHomeSkeleton />;
   }
 
@@ -40,33 +45,19 @@ export function DashboardHome() {
         <p className="text-muted-foreground">{t('dashboard.homeSubtitle')}</p>
       </div>
 
+      {error ? (
+        <p className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          {error}
+        </p>
+      ) : null}
+
       <QuickAddProduct />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatsCard
-          title={t('dashboard.stats.total')}
-          value={products.length}
-          icon={Package}
-          trend="neutral"
-        />
-        <StatsCard
-          title={t('dashboard.stats.dropped')}
-          value={dropped}
-          icon={TrendingDown}
-          trend="down"
-        />
-        <StatsCard
-          title={t('dashboard.stats.increased')}
-          value={increased}
-          icon={TrendingUp}
-          trend="up"
-        />
-        <StatsCard
-          title={t('dashboard.stats.unchanged')}
-          value={unchanged}
-          icon={Minus}
-          trend="neutral"
-        />
+        <StatsCard title={t('dashboard.stats.total')} value={total} icon={Package} trend="neutral" />
+        <StatsCard title={t('dashboard.stats.dropped')} value={dropped} icon={TrendingDown} trend="down" />
+        <StatsCard title={t('dashboard.stats.increased')} value={increased} icon={TrendingUp} trend="up" />
+        <StatsCard title={t('dashboard.stats.unchanged')} value={unchanged} icon={Minus} trend="neutral" />
       </div>
 
       <RecentProducts />

@@ -3,6 +3,9 @@
 FROM node:22-alpine AS build
 WORKDIR /app
 
+ARG PUBLIC_API_BASE_URL=
+ENV PUBLIC_API_BASE_URL=$PUBLIC_API_BASE_URL
+
 COPY ui/ui-price-tracker/package*.json ./
 RUN npm ci
 

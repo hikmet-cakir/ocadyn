@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { useTranslation } from '@/hooks/useTranslation';
+import { ApiError } from '@/lib/api-client';
 import { useAuthStore } from '@/store/auth.store';
 import { APP_NAME } from '@/utils/constants';
 
@@ -22,8 +23,9 @@ export function RegisterForm() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
 
@@ -36,12 +38,19 @@ export function RegisterForm() {
       return;
     }
 
-    const ok = register(name, email, password);
-    if (ok) {
+    setLoading(true);
+    try {
+      await register(name, email, password);
       window.location.href = '/dashboard';
-      return;
+    } catch (err) {
+      if (err instanceof ApiError) {
+        setError(err.message);
+      } else {
+        setError(t('auth.errors.registrationFailed'));
+      }
+    } finally {
+      setLoading(false);
     }
-    setError(t('auth.errors.registrationFailed'));
   }
 
   return (
@@ -110,8 +119,8 @@ export function RegisterForm() {
                 {error}
               </p>
             ) : null}
-            <Button type="submit" className="w-full" size="lg">
-              {t('auth.register.submit')}
+            <Button type="submit" className="w-full" size="lg" disabled={loading}>
+              {loading ? t('auth.register.submitting') ?? 'Creating account…' : t('auth.register.submit')}
             </Button>
           </form>
 

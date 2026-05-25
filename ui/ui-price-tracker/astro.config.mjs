@@ -7,6 +7,8 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+const apiProxyTarget = process.env.API_PROXY_TARGET ?? 'http://localhost:8080';
+
 // https://astro.build/config
 export default defineConfig({
   integrations: [react()],
@@ -16,6 +18,14 @@ export default defineConfig({
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
+      },
+    },
+    server: {
+      proxy: {
+        '/api': {
+          target: apiProxyTarget,
+          changeOrigin: true,
+        },
       },
     },
   },

@@ -12,6 +12,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public final class ServiceSecuritySupport {
@@ -43,7 +44,15 @@ public final class ServiceSecuritySupport {
 
     public static CorsConfigurationSource corsConfigurationSource(CorsProperties corsProperties) {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(corsProperties.allowedOrigins());
+
+        List<String> originPatterns = new ArrayList<>(List.of(
+                "http://localhost:*",
+                "http://127.0.0.1:*"
+        ));
+        if (corsProperties.allowedOrigins() != null) {
+            originPatterns.addAll(corsProperties.allowedOrigins());
+        }
+        config.setAllowedOriginPatterns(originPatterns);
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

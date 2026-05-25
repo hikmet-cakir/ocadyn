@@ -9,6 +9,7 @@ dependencies {
     implementation libs.springBootStarterSecurity
     implementation libs.springBootStarterValidation
     implementation libs.springBootStarterActuator
+    implementation libs.jsoup
     developmentOnly libs.springBootDevTools
     testImplementation libs.springBootStarterTest
 }

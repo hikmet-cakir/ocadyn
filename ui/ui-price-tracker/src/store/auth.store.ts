@@ -1,48 +1,80 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { mockUser } from '@/mock/users';
+import * as authApi from '@/lib/api/auth.api';
+import { setAuthToken } from '@/lib/api-client';
 import type { UserProfile } from '@/types/user.types';
 
 interface AuthState {
-  isAuthenticated: boolean;
+  token: string | null;
   user: UserProfile | null;
-  login: (email: string, password: string) => boolean;
-  register: (name: string, email: string, password: string) => boolean;
+  isAuthenticated: boolean;
+  isHydrated: boolean;
+  login: (email: string, password: string) => Promise<void>;
+  register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
+  restoreSession: () => Promise<boolean>;
+  updateProfile: (payload: { name?: string; locale?: string }) => Promise<void>;
+  setHydrated: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
-      isAuthenticated: false,
+    (set, get) => ({
+      token: null,
       user: null,
+      isAuthenticated: false,
+      isHydrated: false,
 
-      login: (email, _password) => {
-        if (!email.trim()) return false;
-        set({
-          isAuthenticated: true,
-          user: { ...mockUser, email: email.trim() },
-        });
-        return true;
+      login: async (email, password) => {
+        const { token, user } = await authApi.login({ email, password });
+        setAuthToken(token);
+        set({ token, user, isAuthenticated: true });
       },
 
-      register: (name, email, _password) => {
-        if (!name.trim() || !email.trim()) return false;
-        set({
-          isAuthenticated: true,
-          user: { ...mockUser, name: name.trim(), email: email.trim() },
-        });
-        return true;
+      register: async (name, email, password) => {
+        const { token, user } = await authApi.register({ name, email, password });
+        setAuthToken(token);
+        set({ token, user, isAuthenticated: true });
       },
 
-      logout: () => set({ isAuthenticated: false, user: null }),
+      logout: () => {
+        setAuthToken(null);
+        set({ token: null, user: null, isAuthenticated: false });
+      },
+
+      restoreSession: async () => {
+        const { token } = get();
+        if (!token) {
+          set({ isAuthenticated: false, user: null });
+          return false;
+        }
+
+        setAuthToken(token);
+        try {
+          const user = await authApi.getMe();
+          set({ user, isAuthenticated: true });
+          return true;
+        } catch {
+          setAuthToken(null);
+          set({ token: null, user: null, isAuthenticated: false });
+          return false;
+        }
+      },
+
+      updateProfile: async (payload) => {
+        const user = await authApi.updateProfile(payload);
+        set({ user });
+      },
+
+      setHydrated: () => set({ isHydrated: true }),
     }),
     {
       name: 'ocadyn-auth',
       skipHydration: true,
       partialize: (state) => ({
-        isAuthenticated: state.isAuthenticated,
+        token: state.token,
         user: state.user,
+        isAuthenticated: state.isAuthenticated,
       }),
     },
   ),

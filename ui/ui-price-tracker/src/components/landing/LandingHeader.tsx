@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { Hexagon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
@@ -10,18 +9,9 @@ import { APP_NAME } from '@/utils/constants';
 export function LandingHeader() {
   const { t } = useTranslation();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const [hydrated, setHydrated] = useState(false);
+  const isHydrated = useAuthStore((s) => s.isHydrated);
 
-  useEffect(() => {
-    const finish = () => setHydrated(true);
-    if (useAuthStore.persist.hasHydrated()) {
-      finish();
-      return;
-    }
-    return useAuthStore.persist.onFinishHydration(finish);
-  }, []);
-
-  const dashboardHref = hydrated && isAuthenticated ? '/dashboard' : '/login';
+  const dashboardHref = isHydrated && isAuthenticated ? '/dashboard' : '/login';
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-md">

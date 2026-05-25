@@ -75,7 +75,7 @@ export function RecentProducts() {
                       type="button"
                       role="switch"
                       aria-checked={product.trackingStatus === 'active'}
-                      onClick={() => toggleTracking(product.id)}
+                      onClick={() => void toggleTracking(product.id)}
                       className={cn(
                         'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors',
                         product.trackingStatus === 'active' ? 'bg-primary' : 'bg-muted',

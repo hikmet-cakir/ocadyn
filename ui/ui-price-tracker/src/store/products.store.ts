@@ -1,100 +1,145 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { mockProducts } from '@/mock/products';
-import type {
-  NotificationSettings,
-  Product,
-  TrackingStatus,
-} from '@/types/product.types';
+import * as productsApi from '@/lib/api/products.api';
+import type { ApiProductStatsResponse } from '@/types/api.types';
+import type { NotificationSettings, Product, TrackingStatus } from '@/types/product.types';
 
 interface ProductsState {
   products: Product[];
-  addProductFromUrl: (url: string) => string;
-  toggleTracking: (id: string) => void;
-  toggleFavorite: (id: string) => void;
-  setTrackingStatus: (id: string, status: TrackingStatus) => void;
-  updateNotificationSettings: (id: string, settings: NotificationSettings) => void;
+  stats: ApiProductStatsResponse | null;
+  isLoading: boolean;
+  error: string | null;
+  loadProducts: (query?: productsApi.ProductQuery) => Promise<void>;
+  loadStats: () => Promise<void>;
+  loadProductById: (id: string) => Promise<Product | null>;
+  addProductFromUrl: (url: string) => Promise<string>;
+  toggleTracking: (id: string) => Promise<void>;
+  toggleFavorite: (id: string) => Promise<void>;
+  updateNotificationSettings: (id: string, settings: NotificationSettings) => Promise<void>;
   getProductById: (id: string) => Product | undefined;
+  upsertProduct: (product: Product) => void;
+  clearError: () => void;
 }
 
-export const useProductsStore = create<ProductsState>()(
-  persist(
-    (set, get) => ({
-      products: mockProducts,
+function replaceProduct(products: Product[], updated: Product): Product[] {
+  const index = products.findIndex((item) => item.id === updated.id);
+  if (index === -1) return [updated, ...products];
+  const next = [...products];
+  next[index] = updated;
+  return next;
+}
 
-      addProductFromUrl: (url) => {
-        const id = `prod-${Date.now()}`;
-        const newProduct: Product = {
-          id,
-          title: 'New tracked product',
-          image:
-            'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop',
-          marketplace: 'Amazon',
-          currentPrice: 299,
-          lowestPrice: 279,
-          highestPrice: 349,
-          currency: 'USD',
-          changePercent: 0,
-          priceHistory: [
-            {
-              date: new Date(Date.now() - 86400000 * 14).toISOString(),
-              price: 349,
-            },
-            {
-              date: new Date(Date.now() - 86400000 * 7).toISOString(),
-              price: 319,
-            },
-            { date: new Date().toISOString(), price: 299 },
-          ],
-          notificationSettings: { ...mockProducts[0].notificationSettings },
-          trackingStatus: 'active',
-          isFavorite: false,
-          lastUpdated: new Date().toISOString(),
-          url,
-        };
-        set((state) => ({ products: [newProduct, ...state.products] }));
-        return id;
-      },
+export const useProductsStore = create<ProductsState>()((set, get) => ({
+  products: [],
+  stats: null,
+  isLoading: false,
+  error: null,
 
-      toggleTracking: (id) =>
-        set((state) => ({
-          products: state.products.map((p) =>
-            p.id === id
-              ? {
-                  ...p,
-                  trackingStatus: p.trackingStatus === 'active' ? 'paused' : 'active',
-                }
-              : p,
-          ),
-        })),
+  loadProducts: async (query) => {
+    set({ isLoading: true, error: null });
+    try {
+      const products = await productsApi.fetchProducts(query);
+      set({ products, isLoading: false });
+    } catch (error) {
+      set({
+        isLoading: false,
+        error: error instanceof Error ? error.message : 'Failed to load products',
+      });
+    }
+  },
 
-      toggleFavorite: (id) =>
-        set((state) => ({
-          products: state.products.map((p) =>
-            p.id === id ? { ...p, isFavorite: !p.isFavorite } : p,
-          ),
-        })),
+  loadStats: async () => {
+    try {
+      const stats = await productsApi.fetchProductStats();
+      set({ stats });
+    } catch (error) {
+      set({
+        error: error instanceof Error ? error.message : 'Failed to load stats',
+      });
+    }
+  },
 
-      setTrackingStatus: (id, status) =>
-        set((state) => ({
-          products: state.products.map((p) =>
-            p.id === id ? { ...p, trackingStatus: status } : p,
-          ),
-        })),
+  loadProductById: async (id) => {
+    set({ isLoading: true, error: null });
+    try {
+      const product = await productsApi.fetchProductById(id);
+      set((state) => ({
+        products: replaceProduct(state.products, product),
+        isLoading: false,
+      }));
+      return product;
+    } catch (error) {
+      set({
+        isLoading: false,
+        error: error instanceof Error ? error.message : 'Failed to load product',
+      });
+      return null;
+    }
+  },
 
-      updateNotificationSettings: (id, settings) =>
-        set((state) => ({
-          products: state.products.map((p) =>
-            p.id === id ? { ...p, notificationSettings: settings } : p,
-          ),
-        })),
+  addProductFromUrl: async (url) => {
+    set({ error: null });
+    const product = await productsApi.createProductFromUrl(url);
+    set((state) => ({
+      products: [product, ...state.products.filter((item) => item.id !== product.id)],
+    }));
+    return product.id;
+  },
 
-      getProductById: (id) => get().products.find((p) => p.id === id),
-    }),
-    {
-      name: 'ocadyn-products',
-      skipHydration: true,
-      partialize: (state) => ({ products: state.products }),
-    },
-  ),
-);
+  toggleTracking: async (id) => {
+    const current = get().products.find((product) => product.id === id);
+    if (!current) return;
+
+    const nextStatus: TrackingStatus =
+      current.trackingStatus === 'active' ? 'paused' : 'active';
+
+    try {
+      const updated = await productsApi.updateTrackingStatus(id, nextStatus);
+      set((state) => ({
+        products: replaceProduct(state.products, updated),
+      }));
+    } catch (error) {
+      set({
+        error: error instanceof Error ? error.message : 'Failed to update tracking',
+      });
+    }
+  },
+
+  toggleFavorite: async (id) => {
+    const current = get().products.find((product) => product.id === id);
+    if (!current) return;
+
+    try {
+      const updated = await productsApi.updateFavorite(id, !current.isFavorite);
+      set((state) => ({
+        products: replaceProduct(state.products, updated),
+      }));
+    } catch (error) {
+      set({
+        error: error instanceof Error ? error.message : 'Failed to update favorite',
+      });
+    }
+  },
+
+  updateNotificationSettings: async (id, settings) => {
+    try {
+      const updated = await productsApi.updateNotificationSettings(id, settings);
+      set((state) => ({
+        products: replaceProduct(state.products, updated),
+      }));
+    } catch (error) {
+      set({
+        error: error instanceof Error ? error.message : 'Failed to save notification settings',
+      });
+      throw error;
+    }
+  },
+
+  getProductById: (id) => get().products.find((product) => product.id === id),
+
+  upsertProduct: (product) =>
+    set((state) => ({
+      products: replaceProduct(state.products, product),
+    })),
+
+  clearError: () => set({ error: null }),
+}));

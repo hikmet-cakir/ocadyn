@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/common/ThemeToggle';
 import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
 import { useTranslation } from '@/hooks/useTranslation';
+import { ApiError } from '@/lib/api-client';
 import { useAuthStore } from '@/store/auth.store';
 import { cn } from '@/utils/cn';
 
@@ -15,9 +16,36 @@ type SettingsTab = (typeof tabs)[number];
 export function SettingsPage() {
   const { t } = useTranslation();
   const user = useAuthStore((s) => s.user);
+  const updateProfile = useAuthStore((s) => s.updateProfile);
   const [tab, setTab] = useState<SettingsTab>('profile');
   const [name, setName] = useState(user?.name ?? '');
   const [email, setEmail] = useState(user?.email ?? '');
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    setName(user?.name ?? '');
+    setEmail(user?.email ?? '');
+  }, [user]);
+
+  async function handleSaveProfile() {
+    setSaving(true);
+    setError('');
+    setMessage('');
+    try {
+      await updateProfile({ name: name.trim() });
+      setMessage(t('dashboard.settings.saved') ?? 'Profile updated');
+    } catch (err) {
+      if (err instanceof ApiError) {
+        setError(err.message);
+      } else {
+        setError(t('dashboard.settings.saveFailed') ?? 'Could not save profile');
+      }
+    } finally {
+      setSaving(false);
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -67,10 +95,19 @@ export function SettingsPage() {
                     id="settings-email"
                     type="email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    readOnly
+                    disabled
                   />
                 </div>
-                <Button type="button">{t('dashboard.settings.save')}</Button>
+                {message ? <p className="text-sm text-success">{message}</p> : null}
+                {error ? (
+                  <p className="text-sm text-destructive" role="alert">
+                    {error}
+                  </p>
+                ) : null}
+                <Button type="button" onClick={() => void handleSaveProfile()} disabled={saving}>
+                  {saving ? t('dashboard.settings.saving') ?? 'Saving…' : t('dashboard.settings.save')}
+                </Button>
               </CardContent>
             </Card>
           ) : null}
@@ -96,9 +133,9 @@ export function SettingsPage() {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="new-password">{t('auth.fields.password')}</Label>
-                  <Input id="new-password" type="password" />
+                  <Input id="new-password" type="password" disabled />
                 </div>
-                <Button type="button" variant="outline">
+                <Button type="button" variant="outline" disabled>
                   {t('dashboard.settings.changePassword')}
                 </Button>
               </CardContent>
