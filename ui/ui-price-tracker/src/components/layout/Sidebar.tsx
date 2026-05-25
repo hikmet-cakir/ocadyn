@@ -20,7 +20,7 @@ export function Sidebar({ pathname }: SidebarProps) {
   return (
     <aside
       className={cn(
-        'hidden h-screen shrink-0 flex-col border-r border-sidebar-muted bg-sidebar text-sidebar-foreground transition-[width] duration-300 ease-in-out md:flex',
+        'hidden min-h-screen shrink-0 flex-col border-r border-sidebar-muted bg-sidebar text-sidebar-foreground transition-[width] duration-300 ease-in-out md:flex md:self-stretch',
         collapsed ? 'w-[72px]' : 'w-64',
       )}
     >
@@ -70,7 +70,7 @@ export function Sidebar({ pathname }: SidebarProps) {
       </nav>
 
       {!collapsed && user ? (
-        <div className="border-t border-sidebar-muted p-4">
+        <div className="mt-auto border-t border-sidebar-muted p-4">
           <p className="truncate text-sm font-medium">{user.name}</p>
           <p className="truncate text-xs text-sidebar-foreground/70">{user.email}</p>
         </div>
