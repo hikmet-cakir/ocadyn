@@ -196,9 +196,10 @@
     },
     "quickAdd": {
       "title": "Track a product",
-      "description": "Paste a product URL from any supported marketplace.",
+      "description": "Paste a product URL from Amazon, Trendyol, N11, or Walmart.",
       "placeholder": "https://amazon.com/dp/…",
-      "submit": "Track product"
+      "submit": "Track product",
+      "unsupportedMarketplace": "This store is not supported yet. Supported stores: Amazon, Trendyol, N11, Walmart."
     },
     "recentProducts": {
       "title": "Recently tracked",
@@ -275,7 +276,7 @@
         },
         "marketplaces": {
           "q": "Which stores are supported?",
-          "a": "Amazon, Trendyol, Hepsiburada, N11, Walmart, Alibaba, and Sahibinden are supported in this demo."
+          "a": "Amazon, Trendyol, N11, and Walmart are supported in this release."
         },
         "account": {
           "q": "Do I need an account?",

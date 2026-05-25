@@ -2,40 +2,58 @@ package com.ocadyn.scraper;
 
 import com.ocadyn.common.Marketplace;
 import com.ocadyn.common.util.MarketplaceDetector;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.ocadyn.common.util.SupportedMarketplaces;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 @Service
 public class PriceScraperService {
 
-    private static final Logger log = LoggerFactory.getLogger(PriceScraperService.class);
-
     private final PageFetcher pageFetcher;
     private final AmazonHtmlParser amazonHtmlParser;
+    private final TrendyolHtmlParser trendyolHtmlParser;
+    private final N11HtmlParser n11HtmlParser;
+    private final WalmartHtmlParser walmartHtmlParser;
 
-    public PriceScraperService(PageFetcher pageFetcher, AmazonHtmlParser amazonHtmlParser) {
+    public PriceScraperService(
+            PageFetcher pageFetcher,
+            AmazonHtmlParser amazonHtmlParser,
+            TrendyolHtmlParser trendyolHtmlParser,
+            N11HtmlParser n11HtmlParser,
+            WalmartHtmlParser walmartHtmlParser
+    ) {
         this.pageFetcher = pageFetcher;
         this.amazonHtmlParser = amazonHtmlParser;
+        this.trendyolHtmlParser = trendyolHtmlParser;
+        this.n11HtmlParser = n11HtmlParser;
+        this.walmartHtmlParser = walmartHtmlParser;
     }
 
     public ScrapeResult scrape(String url) {
         Marketplace marketplace = MarketplaceDetector.detect(url);
-
-        if (marketplace == Marketplace.AMAZON) {
-            String html = pageFetcher.fetch(url);
-            return amazonHtmlParser.parse(html, url, marketplace)
-                    .orElseThrow(() -> new ScrapeException("Could not extract product details from Amazon page"));
+        if (!SupportedMarketplaces.isSupported(marketplace)) {
+            throw new ScrapeException(SupportedMarketplaces.unsupportedMessage());
         }
 
-        throw new ScrapeException("Real scraping is currently supported for Amazon URLs only");
+        String html = pageFetcher.fetch(url);
+
+        Optional<ScrapeResult> parsed = switch (marketplace) {
+            case AMAZON -> amazonHtmlParser.parse(html, url, marketplace);
+            case TRENDYOL -> trendyolHtmlParser.parse(html, url, marketplace);
+            case N11 -> n11HtmlParser.parse(html, url, marketplace);
+            case WALMART -> walmartHtmlParser.parse(html, url, marketplace);
+            default -> Optional.empty();
+        };
+
+        return parsed.orElseThrow(() -> new ScrapeException(
+                "Could not extract product details from " + marketplace.name() + " page"
+        ));
     }
 
     public BigDecimal refreshPrice(String url, BigDecimal currentPrice) {
-        ScrapeResult scraped = scrape(url);
-        return scraped.price();
+        return scrape(url).price();
     }
 
     public record ScrapeResult(

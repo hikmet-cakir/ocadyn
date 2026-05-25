@@ -1,6 +1,6 @@
 import { Badge } from '@/components/ui/badge';
 import type { Marketplace } from '@/types/product.types';
-import { marketplaceMeta } from '@/mock/marketplaces';
+import { marketplaceMeta } from '@/lib/marketplace-meta';
 
 interface MarketplaceBadgeProps {
   marketplace: Marketplace;

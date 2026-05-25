@@ -3,6 +3,7 @@ package com.ocadyn.product;
 import com.ocadyn.client.ScraperClient;
 import com.ocadyn.common.TrackingStatus;
 import com.ocadyn.common.exception.ApiException;
+import com.ocadyn.common.util.SupportedMarketplaces;
 import com.ocadyn.internal.dto.ActiveProductResponse;
 import com.ocadyn.internal.dto.PriceUpdateResponse;
 import com.ocadyn.product.dto.DashboardStatsResponse;
@@ -48,6 +49,9 @@ public class ProductService {
 
     public ProductResponse trackFromUrl(String userId, TrackProductRequest request) {
         String url = request.url().trim();
+        if (!SupportedMarketplaces.isSupportedUrl(url)) {
+            throw new ApiException(422, SupportedMarketplaces.unsupportedMessage());
+        }
         productRepository.findByUserIdAndUrl(userId, url).ifPresent(existing -> {
             throw new ApiException(409, "Product already tracked");
         });

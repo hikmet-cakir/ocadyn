@@ -10,11 +10,8 @@ export const BREAKPOINTS = {
 export const MARKETPLACES = [
   'Amazon',
   'Trendyol',
-  'Hepsiburada',
   'N11',
   'Walmart',
-  'Alibaba',
-  'Sahibinden',
 ] as const;
 
 export const NOTIFICATION_FREQUENCIES = [

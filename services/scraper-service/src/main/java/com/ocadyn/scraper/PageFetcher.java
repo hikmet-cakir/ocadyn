@@ -27,16 +27,20 @@ public class PageFetcher {
 
     public String fetch(String url) {
         try {
-            HttpRequest request = HttpRequest.newBuilder()
+            HttpRequest.Builder builder = HttpRequest.newBuilder()
                     .uri(URI.create(url.trim()))
                     .timeout(Duration.ofSeconds(30))
                     .header("User-Agent", USER_AGENT)
                     .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
                     .header("Accept-Language", "tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7")
-                    .GET()
-                    .build();
+                    .GET();
 
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            String referer = refererFor(url);
+            if (referer != null) {
+                builder.header("Referer", referer);
+            }
+
+            HttpResponse<String> response = httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() >= 400) {
                 throw new ScrapeException("Store returned HTTP " + response.statusCode());
             }
@@ -44,7 +48,7 @@ public class PageFetcher {
             if (body == null || body.isBlank()) {
                 throw new ScrapeException("Store returned an empty page");
             }
-            if (looksLikeBotChallenge(body)) {
+            if (looksLikeBotChallenge(body, url)) {
                 throw new ScrapeException("Store blocked automated access. Try again later.");
             }
             return body;
@@ -59,11 +63,23 @@ public class PageFetcher {
         }
     }
 
-    private boolean looksLikeBotChallenge(String html) {
+    private String refererFor(String url) {
+        try {
+            URI uri = URI.create(url.trim());
+            if (uri.getScheme() == null || uri.getHost() == null) {
+                return null;
+            }
+            return uri.getScheme() + "://" + uri.getHost() + "/";
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    private boolean looksLikeBotChallenge(String html, String url) {
         String lower = html.toLowerCase();
-        return lower.contains("captcha")
-                || lower.contains("robot check")
-                || lower.contains("validatecaptcha")
-                || lower.contains("alisverise devam etmek icin");
+        if (lower.contains("robot or human") || lower.contains("validatecaptcha")) {
+            return true;
+        }
+        return lower.contains("alisverise devam etmek icin");
     }
 }

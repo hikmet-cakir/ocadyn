@@ -23,22 +23,17 @@ import type { UserProfile } from '@/types/user.types';
 const MARKETPLACE_FROM_API: Record<ApiMarketplace, Marketplace> = {
   AMAZON: 'Amazon',
   TRENDYOL: 'Trendyol',
-  HEPSIBURADA: 'Hepsiburada',
   N11: 'N11',
   WALMART: 'Walmart',
-  ALIBABA: 'Alibaba',
-  SAHIBINDEN: 'Sahibinden',
-  OTHER: 'Amazon',
+  OTHER: 'Other',
 };
 
-const MARKETPLACE_TO_API: Record<Marketplace, ApiMarketplace> = {
+const MARKETPLACE_TO_API: Partial<Record<Marketplace, ApiMarketplace>> = {
   Amazon: 'AMAZON',
   Trendyol: 'TRENDYOL',
-  Hepsiburada: 'HEPSIBURADA',
   N11: 'N11',
   Walmart: 'WALMART',
-  Alibaba: 'ALIBABA',
-  Sahibinden: 'SAHIBINDEN',
+  Other: 'OTHER',
 };
 
 const TRACKING_FROM_API: Record<ApiTrackingStatus, TrackingStatus> = {

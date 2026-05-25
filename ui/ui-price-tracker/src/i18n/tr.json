@@ -196,9 +196,10 @@
     },
     "quickAdd": {
       "title": "Ürün takip et",
-      "description": "Desteklenen herhangi bir pazaryerinden ürün URL'si yapıştırın.",
+      "description": "Amazon, Trendyol, N11 veya Walmart ürün URL'si yapıştırın.",
       "placeholder": "https://trendyol.com/…",
-      "submit": "Ürünü takip et"
+      "submit": "Ürünü takip et",
+      "unsupportedMarketplace": "Bu mağaza henüz desteklenmiyor. Desteklenen mağazalar: Amazon, Trendyol, N11, Walmart."
     },
     "recentProducts": {
       "title": "Son takip edilenler",
@@ -275,7 +276,7 @@
         },
         "marketplaces": {
           "q": "Hangi mağazalar destekleniyor?",
-          "a": "Bu demoda Amazon, Trendyol, Hepsiburada, N11, Walmart, Alibaba ve Sahibinden desteklenmektedir."
+          "a": "Bu sürümde Amazon, Trendyol, N11 ve Walmart desteklenmektedir."
         },
         "account": {
           "q": "Hesap gerekli mi?",

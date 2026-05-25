@@ -2,11 +2,8 @@ export type ApiUserPlan = 'FREE' | 'PRO' | 'ENTERPRISE';
 export type ApiMarketplace =
   | 'AMAZON'
   | 'TRENDYOL'
-  | 'HEPSIBURADA'
   | 'N11'
   | 'WALMART'
-  | 'ALIBABA'
-  | 'SAHIBINDEN'
   | 'OTHER';
 export type ApiTrackingStatus = 'ACTIVE' | 'PAUSED';
 export type ApiNotificationType = 'PRICE_DROP' | 'PRICE_INCREASE' | 'SYSTEM';

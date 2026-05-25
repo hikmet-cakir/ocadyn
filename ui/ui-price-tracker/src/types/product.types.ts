@@ -1,6 +1,7 @@
 import type { MARKETPLACES, NOTIFICATION_FREQUENCIES } from '@/utils/constants';
 
-export type Marketplace = (typeof MARKETPLACES)[number];
+export type SupportedMarketplace = (typeof MARKETPLACES)[number];
+export type Marketplace = SupportedMarketplace | 'Other';
 
 export type TrackingStatus = 'active' | 'paused';
 

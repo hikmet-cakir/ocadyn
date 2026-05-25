@@ -8,4 +8,5 @@ dependencies {
     runtimeOnly libs.jjwtJackson
 
     compileOnly libs.springBootStarterActuator
+    compileOnly libs.springBootStarterDataMongo
 }

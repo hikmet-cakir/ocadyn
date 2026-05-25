@@ -7,6 +7,7 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { productDetailHref } from '@/hooks/useProductIdFromUrl';
 import { ApiError } from '@/lib/api-client';
 import { useProductsStore } from '@/store/products.store';
+import { isSupportedProductUrl } from '@/utils/marketplaceUrl';
 import { MARKETPLACES } from '@/utils/constants';
 
 export function QuickAddProduct() {
@@ -19,6 +20,11 @@ export function QuickAddProduct() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!url.trim()) return;
+
+    if (!isSupportedProductUrl(url.trim())) {
+      setError(t('dashboard.quickAdd.unsupportedMarketplace'));
+      return;
+    }
 
     setError('');
     setLoading(true);
