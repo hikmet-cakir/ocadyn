@@ -65,7 +65,7 @@ public class NotificationService {
         BigDecimal next = request.currentPrice();
         NotificationType type = request.type() != null
                 ? request.type()
-                : (next.compareTo(previous) < 0 ? NotificationType.PRICE_DROP : NotificationType.PRICE_INCREASE);
+                : resolveTypeFromPrices(previous, next);
 
         String message = request.message();
         if (message == null || message.isBlank()) {
@@ -109,7 +109,7 @@ public class NotificationService {
             BigDecimal next
     ) {
         userContactRepository.findById(request.userId()).ifPresentOrElse(user -> {
-            String subject = "OCADYN: " + request.productTitle();
+            String subject = "OCADYN · " + request.productTitle();
             String body = """
                     Merhaba %s,
 
@@ -129,6 +129,17 @@ public class NotificationService {
             );
             emailNotificationSender.send(user.getEmail(), subject, body);
         }, () -> log.warn("User {} not found for email alert on product {}", request.userId(), request.productId()));
+    }
+
+    private static NotificationType resolveTypeFromPrices(BigDecimal previous, BigDecimal next) {
+        int cmp = next.compareTo(previous);
+        if (cmp < 0) {
+            return NotificationType.PRICE_DROP;
+        }
+        if (cmp > 0) {
+            return NotificationType.PRICE_INCREASE;
+        }
+        return NotificationType.SYSTEM;
     }
 
     private NotificationResponse toResponse(AppNotification notification) {

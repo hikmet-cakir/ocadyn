@@ -10,10 +10,15 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 
 public final class NotificationDeliveryPolicy {
 
     public static final Duration THRESHOLD_CHECK_INTERVAL = Duration.ofMinutes(5);
+    /** Clock-aligned schedule for periodic alerts (Turkey local time). */
+    private static final ZoneId SCHEDULE_ZONE = ZoneId.of("Europe/Istanbul");
 
     private NotificationDeliveryPolicy() {}
 
@@ -41,8 +46,7 @@ public final class NotificationDeliveryPolicy {
         if (lastNotification == null) {
             return true;
         }
-        Duration interval = intervalFor(settings.frequency());
-        return !lastNotification.plus(interval).isAfter(now);
+        return isClockPeriodElapsed(settings.frequency(), lastNotification, now);
     }
 
     public static boolean shouldSendThresholdAlert(
@@ -72,10 +76,7 @@ public final class NotificationDeliveryPolicy {
         if (settings == null || settings.channels() == null || !settings.channels().push()) {
             return false;
         }
-        if (isInstantAlertsEnabled(settings)) {
-            return isPeriodicNotificationDue(product, now);
-        }
-        return true;
+        return isPeriodicNotificationDue(product, now);
     }
 
     public static String buildThresholdMessage(PriceUpdateResponse update) {
@@ -85,8 +86,11 @@ public final class NotificationDeliveryPolicy {
             BigDecimal percent = percentChange(previous, current);
             return "Price dropped by " + percent + "%";
         }
-        BigDecimal percent = percentChange(previous, current);
-        return "Price increased by " + percent + "%";
+        if (current.compareTo(previous) > 0) {
+            BigDecimal percent = percentChange(previous, current);
+            return "Price increased by " + percent + "%";
+        }
+        return "Scheduled price update: " + update.currentPrice() + " " + update.currency();
     }
 
     public static String buildPeriodicMessage(PriceUpdateResponse update) {
@@ -95,6 +99,37 @@ public final class NotificationDeliveryPolicy {
 
     private static boolean isInstantAlertsEnabled(ProductNotificationSettingsDto settings) {
         return settings != null && settings.instantAlertsEnabled();
+    }
+
+    private static boolean isClockPeriodElapsed(
+            NotificationFrequency frequency,
+            Instant lastNotification,
+            Instant now
+    ) {
+        if (!now.isAfter(lastNotification)) {
+            return false;
+        }
+        ZonedDateTime lastZ = lastNotification.atZone(SCHEDULE_ZONE);
+        ZonedDateTime nowZ = now.atZone(SCHEDULE_ZONE);
+        return switch (frequency) {
+            case HOURLY -> lastZ.truncatedTo(ChronoUnit.HOURS).isBefore(nowZ.truncatedTo(ChronoUnit.HOURS));
+            case SIX_HOURS -> sixHourBlock(lastZ) < sixHourBlock(nowZ);
+            case TWELVE_HOURS -> twelveHourBlock(lastZ) < twelveHourBlock(nowZ);
+            case DAILY -> lastZ.truncatedTo(ChronoUnit.DAYS).isBefore(nowZ.truncatedTo(ChronoUnit.DAYS));
+            case WEEKLY -> weekBlock(lastZ) < weekBlock(nowZ);
+        };
+    }
+
+    private static long sixHourBlock(ZonedDateTime z) {
+        return z.toLocalDate().toEpochDay() * 4L + (z.getHour() / 6);
+    }
+
+    private static long twelveHourBlock(ZonedDateTime z) {
+        return z.toLocalDate().toEpochDay() * 2L + (z.getHour() / 12);
+    }
+
+    private static long weekBlock(ZonedDateTime z) {
+        return z.toLocalDate().toEpochDay() / 7;
     }
 
     private static boolean hasTriggerRules(ProductTriggerSettingsDto triggers) {

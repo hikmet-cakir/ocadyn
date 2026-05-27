@@ -78,19 +78,29 @@ public class PriceCheckScheduler {
                 }
 
                 if (thresholdAlert) {
-                    NotificationType type = update.currentPrice().compareTo(update.previousPrice()) < 0
-                            ? NotificationType.PRICE_DROP
-                            : NotificationType.PRICE_INCREASE;
-                    sendNotification(
-                            product,
-                            update,
-                            settings,
-                            type,
-                            NotificationDeliveryPolicy.buildThresholdMessage(update)
-                    );
+                    int cmp = update.currentPrice().compareTo(update.previousPrice());
+                    if (cmp != 0) {
+                        NotificationType type = cmp < 0
+                                ? NotificationType.PRICE_DROP
+                                : NotificationType.PRICE_INCREASE;
+                        sendNotification(
+                                product,
+                                update,
+                                settings,
+                                type,
+                                NotificationDeliveryPolicy.buildThresholdMessage(update)
+                        );
+                    }
                 }
 
                 if (periodicDue) {
+                    boolean sendEmail = settings.channels() != null && settings.channels().email();
+                    log.info(
+                            "Periodic alert for product {} ({}) email={}",
+                            product.id(),
+                            product.title(),
+                            sendEmail
+                    );
                     sendNotification(
                             product,
                             update,
