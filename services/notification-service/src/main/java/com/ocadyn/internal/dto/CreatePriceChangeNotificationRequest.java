@@ -15,7 +15,8 @@ public record CreatePriceChangeNotificationRequest(
         BigDecimal currentPrice,
         String currency,
         NotificationType type,
-        String message
+        String message,
+        boolean sendEmail
 ) {
     public CreatePriceChangeNotificationRequest(
             String userId,
@@ -27,6 +28,6 @@ public record CreatePriceChangeNotificationRequest(
             BigDecimal currentPrice,
             String currency
     ) {
-        this(userId, productId, productTitle, productImage, marketplace, previousPrice, currentPrice, currency, null, null);
+        this(userId, productId, productTitle, productImage, marketplace, previousPrice, currentPrice, currency, null, null, false);
     }
 }

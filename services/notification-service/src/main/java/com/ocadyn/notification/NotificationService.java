@@ -4,6 +4,9 @@ import com.ocadyn.common.NotificationType;
 import com.ocadyn.common.exception.ApiException;
 import com.ocadyn.internal.dto.CreatePriceChangeNotificationRequest;
 import com.ocadyn.notification.dto.NotificationResponse;
+import com.ocadyn.user.UserContactRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -13,10 +16,20 @@ import java.util.List;
 @Service
 public class NotificationService {
 
-    private final AppNotificationRepository notificationRepository;
+    private static final Logger log = LoggerFactory.getLogger(NotificationService.class);
 
-    public NotificationService(AppNotificationRepository notificationRepository) {
+    private final AppNotificationRepository notificationRepository;
+    private final UserContactRepository userContactRepository;
+    private final EmailNotificationSender emailNotificationSender;
+
+    public NotificationService(
+            AppNotificationRepository notificationRepository,
+            UserContactRepository userContactRepository,
+            EmailNotificationSender emailNotificationSender
+    ) {
         this.notificationRepository = notificationRepository;
+        this.userContactRepository = userContactRepository;
+        this.emailNotificationSender = emailNotificationSender;
     }
 
     public List<NotificationResponse> list(String userId, NotificationType type) {
@@ -83,6 +96,39 @@ public class NotificationService {
         notification.setCurrency(request.currency());
         notification.setRead(false);
         notificationRepository.save(notification);
+
+        if (request.sendEmail()) {
+            sendEmailAlert(request, message, previous, next);
+        }
+    }
+
+    private void sendEmailAlert(
+            CreatePriceChangeNotificationRequest request,
+            String message,
+            BigDecimal previous,
+            BigDecimal next
+    ) {
+        userContactRepository.findById(request.userId()).ifPresentOrElse(user -> {
+            String subject = "OCADYN: " + request.productTitle();
+            String body = """
+                    Merhaba %s,
+
+                    %s
+
+                    Önceki fiyat: %s %s
+                    Güncel fiyat: %s %s
+
+                    — OCADYN Fiyat Takip
+                    """.formatted(
+                    user.getName() != null ? user.getName() : user.getEmail(),
+                    message,
+                    previous,
+                    request.currency(),
+                    next,
+                    request.currency()
+            );
+            emailNotificationSender.send(user.getEmail(), subject, body);
+        }, () -> log.warn("User {} not found for email alert on product {}", request.userId(), request.productId()));
     }
 
     private NotificationResponse toResponse(AppNotification notification) {

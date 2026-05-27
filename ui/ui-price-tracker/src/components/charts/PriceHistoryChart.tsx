@@ -19,9 +19,31 @@ type RangeKey = '7d' | '30d' | '90d' | 'all';
 interface PriceHistoryChartProps {
   data: PricePoint[];
   currency: string;
+  currentPrice?: number;
 }
 
-export function PriceHistoryChart({ data, currency }: PriceHistoryChartProps) {
+function dayKey(isoDate: string): string {
+  return new Date(isoDate).toISOString().slice(0, 10);
+}
+
+function aggregateByDay(data: PricePoint[], currentPrice?: number): PricePoint[] {
+  const sorted = [...data].sort(
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+  );
+  const byDay = new Map<string, PricePoint>();
+  for (const point of sorted) {
+    byDay.set(dayKey(point.date), point);
+  }
+  if (currentPrice != null) {
+    const today = new Date().toISOString().slice(0, 10);
+    byDay.set(today, { date: new Date().toISOString(), price: currentPrice });
+  }
+  return Array.from(byDay.values()).sort(
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+  );
+}
+
+export function PriceHistoryChart({ data, currency, currentPrice }: PriceHistoryChartProps) {
   const { t } = useTranslation();
   const [range, setRange] = useState<RangeKey>('30d');
 
@@ -33,26 +55,23 @@ export function PriceHistoryChart({ data, currency }: PriceHistoryChartProps) {
   ];
 
   const chartData = useMemo(() => {
-    const sorted = [...data].sort(
-      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-    );
+    const aggregated = aggregateByDay(data, currentPrice);
     const selected = ranges.find((r) => r.key === range);
-    if (!selected?.days) {
-      return sorted.map((p) => ({
-        date: new Date(p.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
-        price: p.price,
-      }));
-    }
-    const cutoff = Date.now() - selected.days * 86400000;
-    return sorted
-      .filter((p) => new Date(p.date).getTime() >= cutoff)
-      .map((p) => ({
-        date: new Date(p.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
-        price: p.price,
-      }));
-  }, [data, range]);
+    const filtered = !selected?.days
+      ? aggregated
+      : aggregated.filter((p) => {
+          const cutoff = Date.now() - selected.days! * 86400000;
+          return new Date(p.date).getTime() >= cutoff;
+        });
+    return filtered.map((p) => ({
+      date: new Date(p.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
+      price: p.price,
+    }));
+  }, [data, currentPrice, range]);
 
-  if (data.length === 0) {
+  const hasData = data.length > 0 || currentPrice != null;
+
+  if (!hasData) {
     return (
       <p className="py-12 text-center text-sm text-muted-foreground">
         {t('dashboard.product.noHistory')}

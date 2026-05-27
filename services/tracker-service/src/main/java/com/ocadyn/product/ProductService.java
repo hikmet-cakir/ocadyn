@@ -151,8 +151,10 @@ public class ProductService {
             product.setChangePercent(change);
         }
 
-        product.getPriceHistory().add(new PricePoint(Instant.now(), newPrice));
-        product.setLastPriceCheckAt(Instant.now());
+        Instant now = Instant.now();
+        PriceHistoryUtils.upsertDailyPoint(product.getPriceHistory(), newPrice, now);
+        product.setPriceHistory(PriceHistoryUtils.compactByDay(product.getPriceHistory()));
+        product.setLastPriceCheckAt(now);
         productRepository.save(product);
 
         boolean changed = previous.compareTo(newPrice) != 0;
@@ -197,7 +199,7 @@ public class ProductService {
                 product.getHighestPrice(),
                 product.getCurrency(),
                 product.getChangePercent(),
-                product.getPriceHistory(),
+                PriceHistoryUtils.compactByDay(product.getPriceHistory()),
                 new NotificationSettingsResponse(
                         settings.getChannels(),
                         settings.getTriggers(),

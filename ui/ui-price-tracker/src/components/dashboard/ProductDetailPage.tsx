@@ -162,7 +162,11 @@ function ProductDetailContent() {
           <CardTitle>{t('dashboard.product.historyTitle')}</CardTitle>
         </CardHeader>
         <CardContent>
-          <PriceHistoryChart data={product.priceHistory} currency={product.currency} />
+          <PriceHistoryChart
+            data={product.priceHistory}
+            currency={product.currency}
+            currentPrice={product.currentPrice}
+          />
         </CardContent>
       </Card>
     </div>

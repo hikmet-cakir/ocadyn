@@ -15,5 +15,6 @@ public record CreatePriceChangeNotificationRequest(
         BigDecimal currentPrice,
         String currency,
         NotificationType type,
-        String message
+        String message,
+        boolean sendEmail
 ) {}

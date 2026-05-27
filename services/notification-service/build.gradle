@@ -10,6 +10,7 @@ dependencies {
     implementation libs.springBootStarterSecurity
     implementation libs.springBootStarterValidation
     implementation libs.springBootStarterActuator
+    implementation libs.springBootStarterMail
     implementation libs.springdocOpenapi
     developmentOnly libs.springBootDevTools
     testImplementation libs.springBootStarterTest

@@ -12,6 +12,7 @@ ext {
             springBootStarterSecurity  : "org.springframework.boot:spring-boot-starter-security:${versions.springBoot}",
             springBootStarterValidation: "org.springframework.boot:spring-boot-starter-validation:${versions.springBoot}",
             springBootStarterActuator  : "org.springframework.boot:spring-boot-starter-actuator:${versions.springBoot}",
+            springBootStarterMail      : "org.springframework.boot:spring-boot-starter-mail:${versions.springBoot}",
             springBootStarterTest      : "org.springframework.boot:spring-boot-starter-test:${versions.springBoot}",
             springBootDevTools         : "org.springframework.boot:spring-boot-devtools:${versions.springBoot}",
             jjwtApi                    : "io.jsonwebtoken:jjwt-api:${versions.jjwt}",
