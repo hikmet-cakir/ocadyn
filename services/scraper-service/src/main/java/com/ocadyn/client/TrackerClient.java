@@ -1,7 +1,6 @@
 package com.ocadyn.client;
 
 import com.ocadyn.client.dto.ActiveProductResponse;
-import com.ocadyn.client.dto.CreatePriceChangeNotificationRequest;
 import com.ocadyn.client.dto.PriceUpdateRequest;
 import com.ocadyn.client.dto.PriceUpdateResponse;
 import com.ocadyn.config.InternalApiProperties;
@@ -42,5 +41,13 @@ public class TrackerClient {
                 .body(request)
                 .retrieve()
                 .body(PriceUpdateResponse.class);
+    }
+
+    public void recordPeriodicNotification(String productId) {
+        trackerRestClient.patch()
+                .uri("/internal/products/{id}/periodic-notification", productId)
+                .header(InternalApiKeyFilter.HEADER_NAME, internalApiProperties.key())
+                .retrieve()
+                .toBodilessEntity();
     }
 }

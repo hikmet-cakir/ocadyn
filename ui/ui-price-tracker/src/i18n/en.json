@@ -19,7 +19,9 @@
     "theme": "Theme",
     "light": "Light",
     "dark": "Dark",
-    "system": "System"
+    "system": "System",
+    "ok": "OK",
+    "close": "Close"
   },
   "landing": {
     "heroBadge": "Smart price alerts",
@@ -302,13 +304,22 @@
         "email": "Email",
         "sms": "SMS",
         "phone": "Call",
-        "push": "Push"
+        "push": "Push",
+        "required": "Required",
+        "pushRequired": "Push notification selection is required.",
+        "soon": "Soon",
+        "unsupportedTitle": "Not available yet",
+        "unsupportedMessage": "SMS and phone call alerts are not supported yet. Please use email or push notifications for now."
       },
       "percentDrop": "Drop % threshold",
       "percentRise": "Rise % threshold",
       "fixedDrop": "Drop $ amount",
       "fixedRise": "Rise $ amount",
-      "frequency": "Check frequency",
+      "frequency": "Notification frequency",
+      "frequencyHint": "You receive periodic price updates at this interval.",
+      "priceChangeAlerts": "Instant price alerts",
+      "priceChangeAlertsHint": "In addition to periodic updates, get instant alerts when your drop/rise rules are met.",
+      "triggersHint": "All fields are optional. Leave blank to alert on any price change.",
       "frequencyOptions": {
         "hourly": "Hourly",
         "6h": "Every 6h",

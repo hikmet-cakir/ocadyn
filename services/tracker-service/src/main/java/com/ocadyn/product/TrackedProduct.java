@@ -48,6 +48,10 @@ public class TrackedProduct {
 
     private boolean favorite;
 
+    private Instant lastPriceCheckAt;
+
+    private Instant lastNotificationAt;
+
     @LastModifiedDate
     private Instant lastUpdated;
 
@@ -172,6 +176,22 @@ public class TrackedProduct {
 
     public void setFavorite(boolean favorite) {
         this.favorite = favorite;
+    }
+
+    public Instant getLastPriceCheckAt() {
+        return lastPriceCheckAt;
+    }
+
+    public void setLastPriceCheckAt(Instant lastPriceCheckAt) {
+        this.lastPriceCheckAt = lastPriceCheckAt;
+    }
+
+    public Instant getLastNotificationAt() {
+        return lastNotificationAt;
+    }
+
+    public void setLastNotificationAt(Instant lastNotificationAt) {
+        this.lastNotificationAt = lastNotificationAt;
     }
 
     public Instant getLastUpdated() {

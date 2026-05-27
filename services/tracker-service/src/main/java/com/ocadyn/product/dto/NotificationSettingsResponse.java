@@ -7,5 +7,6 @@ import com.ocadyn.product.TriggerSettings;
 public record NotificationSettingsResponse(
         NotificationChannelSettings channels,
         TriggerSettings triggers,
-        NotificationFrequency frequency
+        NotificationFrequency frequency,
+        boolean instantAlertsEnabled
 ) {}

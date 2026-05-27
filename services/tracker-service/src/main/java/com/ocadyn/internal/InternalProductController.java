@@ -35,4 +35,9 @@ public class InternalProductController {
     ) {
         return productService.applyPriceUpdate(id, request.newPrice());
     }
+
+    @PatchMapping("/{id}/periodic-notification")
+    public void recordPeriodicNotification(@PathVariable String id) {
+        productService.recordPeriodicNotification(id);
+    }
 }

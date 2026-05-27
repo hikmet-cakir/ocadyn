@@ -22,7 +22,7 @@ ocadyn:
   notification:
     base-url: ${NOTIFICATION_SERVICE_URL:http://localhost:9091}
   price-check:
-    delay-ms: ${PRICE_CHECK_DELAY_MS:3600000}
+    delay-ms: ${PRICE_CHECK_DELAY_MS:300000}
 
 management:
   endpoints:

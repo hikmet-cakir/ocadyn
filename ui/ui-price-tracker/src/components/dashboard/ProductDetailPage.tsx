@@ -141,6 +141,7 @@ function ProductDetailContent() {
           </div>
 
           <ProductNotificationForm
+            formKey={product.id}
             settings={draftSettings}
             onChange={setDraftSettings}
             onSave={() => void handleSave()}

@@ -1,6 +1,7 @@
 package com.ocadyn.client.dto;
 
 import com.ocadyn.common.Marketplace;
+import com.ocadyn.common.NotificationType;
 
 import java.math.BigDecimal;
 
@@ -12,5 +13,7 @@ public record CreatePriceChangeNotificationRequest(
         Marketplace marketplace,
         BigDecimal previousPrice,
         BigDecimal currentPrice,
-        String currency
+        String currency,
+        NotificationType type,
+        String message
 ) {}

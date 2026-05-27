@@ -6,6 +6,7 @@ public class NotificationSettings {
     private NotificationChannelSettings channels = new NotificationChannelSettings();
     private TriggerSettings triggers = new TriggerSettings();
     private NotificationFrequency frequency = NotificationFrequency.TWELVE_HOURS;
+    private boolean instantAlertsEnabled;
 
     public NotificationChannelSettings getChannels() {
         return channels;
@@ -29,5 +30,13 @@ public class NotificationSettings {
 
     public void setFrequency(NotificationFrequency frequency) {
         this.frequency = frequency;
+    }
+
+    public boolean isInstantAlertsEnabled() {
+        return instantAlertsEnabled;
+    }
+
+    public void setInstantAlertsEnabled(boolean instantAlertsEnabled) {
+        this.instantAlertsEnabled = instantAlertsEnabled;
     }
 }

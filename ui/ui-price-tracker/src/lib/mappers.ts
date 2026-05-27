@@ -97,11 +97,22 @@ export function mapMarketplaceLabel(marketplace: ApiMarketplace | null): string 
   return mapMarketplaceFromApi(marketplace);
 }
 
+function hasTriggerRules(triggers: ApiTriggerSettings): boolean {
+  return (
+    triggers.percentDrop != null ||
+    triggers.percentRise != null ||
+    triggers.fixedDrop != null ||
+    triggers.fixedRise != null
+  );
+}
+
 function mapNotificationSettings(settings: ApiNotificationSettings): NotificationSettings {
   return {
     channels: { ...settings.channels },
     triggers: { ...settings.triggers },
     frequency: FREQUENCY_FROM_API[settings.frequency],
+    instantAlertsEnabled:
+      settings.instantAlertsEnabled ?? hasTriggerRules(settings.triggers),
   };
 }
 
@@ -112,6 +123,7 @@ export function mapNotificationSettingsToApi(
     channels: { ...settings.channels },
     triggers: { ...settings.triggers },
     frequency: FREQUENCY_TO_API[settings.frequency],
+    instantAlertsEnabled: settings.instantAlertsEnabled,
   };
 }
 

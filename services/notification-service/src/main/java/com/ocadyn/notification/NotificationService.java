@@ -50,15 +50,25 @@ public class NotificationService {
     public void createPriceChangeNotification(CreatePriceChangeNotificationRequest request) {
         BigDecimal previous = request.previousPrice();
         BigDecimal next = request.currentPrice();
-        NotificationType type = next.compareTo(previous) < 0
-                ? NotificationType.PRICE_DROP
-                : NotificationType.PRICE_INCREASE;
+        NotificationType type = request.type() != null
+                ? request.type()
+                : (next.compareTo(previous) < 0 ? NotificationType.PRICE_DROP : NotificationType.PRICE_INCREASE);
 
-        BigDecimal percent = next.subtract(previous)
-                .divide(previous, 4, RoundingMode.HALF_UP)
-                .multiply(BigDecimal.valueOf(100))
-                .abs()
-                .setScale(1, RoundingMode.HALF_UP);
+        String message = request.message();
+        if (message == null || message.isBlank()) {
+            if (previous.compareTo(BigDecimal.ZERO) > 0) {
+                BigDecimal percent = next.subtract(previous)
+                        .divide(previous, 4, RoundingMode.HALF_UP)
+                        .multiply(BigDecimal.valueOf(100))
+                        .abs()
+                        .setScale(1, RoundingMode.HALF_UP);
+                message = type == NotificationType.PRICE_DROP
+                        ? "Price dropped by " + percent + "%"
+                        : "Price increased by " + percent + "%";
+            } else {
+                message = "Price update: " + next + " " + request.currency();
+            }
+        }
 
         AppNotification notification = new AppNotification();
         notification.setUserId(request.userId());
@@ -67,9 +77,7 @@ public class NotificationService {
         notification.setProductImage(request.productImage());
         notification.setMarketplace(request.marketplace());
         notification.setType(type);
-        notification.setMessage(type == NotificationType.PRICE_DROP
-                ? "Price dropped by " + percent + "%"
-                : "Price increased by " + percent + "%");
+        notification.setMessage(message);
         notification.setPreviousPrice(previous);
         notification.setCurrentPrice(next);
         notification.setCurrency(request.currency());

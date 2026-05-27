@@ -30,6 +30,7 @@ export interface NotificationSettings {
   channels: NotificationChannelSettings;
   triggers: TriggerSettings;
   frequency: NotificationFrequency;
+  instantAlertsEnabled: boolean;
 }
 
 export interface Product {

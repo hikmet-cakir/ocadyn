@@ -2,6 +2,9 @@ package com.ocadyn.product;
 
 import com.ocadyn.client.ScraperClient;
 import com.ocadyn.common.TrackingStatus;
+import com.ocadyn.common.dto.ProductNotificationChannelsDto;
+import com.ocadyn.common.dto.ProductNotificationSettingsDto;
+import com.ocadyn.common.dto.ProductTriggerSettingsDto;
 import com.ocadyn.common.exception.ApiException;
 import com.ocadyn.common.util.SupportedMarketplaces;
 import com.ocadyn.internal.dto.ActiveProductResponse;
@@ -95,6 +98,10 @@ public class ProductService {
             String productId,
             UpdateNotificationSettingsRequest request
     ) {
+        if (request.notificationSettings() == null
+                || !request.notificationSettings().getChannels().isPush()) {
+            throw new ApiException(422, "Push notification selection is required.");
+        }
         TrackedProduct product = requireOwnedProduct(userId, productId);
         product.setNotificationSettings(request.notificationSettings());
         return toResponse(productRepository.save(product));
@@ -119,7 +126,10 @@ public class ProductService {
                         p.getMarketplace(),
                         p.getCurrentPrice(),
                         p.getCurrency(),
-                        p.getTrackingStatus()
+                        p.getTrackingStatus(),
+                        p.getLastPriceCheckAt(),
+                        p.getLastNotificationAt(),
+                        toNotificationSettingsDto(p.getNotificationSettings())
                 ))
                 .toList();
     }
@@ -142,6 +152,7 @@ public class ProductService {
         }
 
         product.getPriceHistory().add(new PricePoint(Instant.now(), newPrice));
+        product.setLastPriceCheckAt(Instant.now());
         productRepository.save(product);
 
         boolean changed = previous.compareTo(newPrice) != 0;
@@ -190,11 +201,43 @@ public class ProductService {
                 new NotificationSettingsResponse(
                         settings.getChannels(),
                         settings.getTriggers(),
-                        settings.getFrequency()
+                        settings.getFrequency(),
+                        settings.isInstantAlertsEnabled()
                 ),
                 product.getTrackingStatus(),
                 product.isFavorite(),
                 product.getLastUpdated()
         );
+    }
+
+    private ProductNotificationSettingsDto toNotificationSettingsDto(NotificationSettings settings) {
+        if (settings == null) {
+            return null;
+        }
+        NotificationChannelSettings channels = settings.getChannels();
+        TriggerSettings triggers = settings.getTriggers();
+        return new ProductNotificationSettingsDto(
+                new ProductNotificationChannelsDto(
+                        channels.isEmail(),
+                        channels.isSms(),
+                        channels.isPhone(),
+                        channels.isPush()
+                ),
+                new ProductTriggerSettingsDto(
+                        triggers.getPercentDrop(),
+                        triggers.getPercentRise(),
+                        triggers.getFixedDrop(),
+                        triggers.getFixedRise()
+                ),
+                settings.getFrequency(),
+                settings.isInstantAlertsEnabled()
+        );
+    }
+
+    public void recordPeriodicNotification(String productId) {
+        TrackedProduct product = productRepository.findById(productId)
+                .orElseThrow(() -> new ApiException(404, "Product not found"));
+        product.setLastNotificationAt(Instant.now());
+        productRepository.save(product);
     }
 }

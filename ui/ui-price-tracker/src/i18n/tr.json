@@ -19,7 +19,9 @@
     "theme": "Tema",
     "light": "Açık",
     "dark": "Koyu",
-    "system": "Sistem"
+    "system": "Sistem",
+    "ok": "Tamam",
+    "close": "Kapat"
   },
   "landing": {
     "heroBadge": "Akıllı fiyat uyarıları",
@@ -302,13 +304,22 @@
         "email": "E-posta",
         "sms": "SMS",
         "phone": "Arama",
-        "push": "Push"
+        "push": "Push",
+        "required": "Zorunlu",
+        "pushRequired": "Push bildirimi seçimi zorunludur.",
+        "soon": "Yakında",
+        "unsupportedTitle": "Henüz desteklenmiyor",
+        "unsupportedMessage": "SMS ve telefon araması bildirimleri henüz desteklenmiyor. Şimdilik e-posta veya push bildirimlerini kullanabilirsiniz."
       },
       "percentDrop": "Düşüş % eşiği",
       "percentRise": "Artış % eşiği",
       "fixedDrop": "Düşüş tutarı ($)",
       "fixedRise": "Artış tutarı ($)",
-      "frequency": "Kontrol sıklığı",
+      "frequency": "Bildirim sıklığı",
+      "frequencyHint": "Seçtiğiniz aralıkta periyodik fiyat bildirimi alırsınız.",
+      "priceChangeAlerts": "Ani fiyat uyarıları",
+      "priceChangeAlertsHint": "Periyodik bildirimlere ek olarak, belirlediğiniz düşüş/artış kurallarına uyunca anında bildirim alırsınız.",
+      "triggersHint": "Tüm alanlar isteğe bağlıdır. Boş bırakırsanız her fiyat değişiminde uyarı alırsınız.",
       "frequencyOptions": {
         "hourly": "Saatlik",
         "6h": "6 saatte bir",

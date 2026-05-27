@@ -50,6 +50,7 @@ export interface ApiNotificationSettings {
   channels: ApiNotificationChannelSettings;
   triggers: ApiTriggerSettings;
   frequency: ApiNotificationFrequency;
+  instantAlertsEnabled: boolean;
 }
 
 export interface ApiProductResponse {
