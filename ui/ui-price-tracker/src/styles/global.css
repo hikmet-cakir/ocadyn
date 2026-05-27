@@ -34,11 +34,20 @@
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-muted: var(--sidebar-muted);
+  --color-sidebar-active: var(--sidebar-active);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-border: var(--primary-border);
+  --color-info: var(--info);
+  --color-body: var(--body);
+  --color-success-soft: var(--success-soft);
+  --color-destructive-soft: var(--destructive-soft);
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -56,7 +65,8 @@
   }
 
   body {
-    @apply min-h-screen bg-background font-sans text-foreground antialiased;
+    @apply min-h-screen bg-background font-sans antialiased;
+    color: var(--body);
   }
 
   h1,
@@ -64,5 +74,107 @@
   h3,
   h4 {
     font-family: var(--font-display);
+    @apply font-semibold text-foreground;
   }
+}
+
+/* Custom component styles — plain CSS (Tailwind v4 cannot @apply custom utilities) */
+.premium-card {
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background-color: var(--card);
+  box-shadow: var(--shadow-premium);
+  transition: all 0.2s ease-out;
+}
+
+.premium-card-hover {
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background-color: var(--card);
+  box-shadow: var(--shadow-premium);
+  transition: all 0.2s ease-out;
+}
+
+.premium-card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-premium-hover);
+}
+
+.focus-premium:focus-visible {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+.topbar-icon-btn {
+  display: inline-flex;
+  height: 2.5rem;
+  width: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border);
+  background-color: var(--card);
+  color: #94a3b8;
+  transition: all 0.2s ease;
+}
+
+.topbar-icon-btn:hover {
+  color: #111827;
+  border-color: var(--primary-border);
+  background-color: var(--primary-soft);
+}
+
+.btn-glow {
+  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.35);
+}
+
+.btn-glow:hover {
+  box-shadow: 0 6px 28px rgba(37, 99, 235, 0.45);
+}
+
+/* Sidebar */
+aside.ocadyn-sidebar {
+  background: linear-gradient(180deg, var(--sidebar-from) 0%, var(--sidebar-to) 100%) !important;
+  color: #ffffff !important;
+}
+
+html.dark aside.ocadyn-sidebar {
+  background: linear-gradient(180deg, var(--sidebar-from) 0%, var(--sidebar-to) 100%) !important;
+}
+
+aside.ocadyn-sidebar a,
+aside.ocadyn-sidebar button,
+aside.ocadyn-sidebar p,
+aside.ocadyn-sidebar span,
+aside.ocadyn-sidebar svg {
+  color: #ffffff !important;
+}
+
+aside.ocadyn-sidebar .ocadyn-sidebar-link {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+aside.ocadyn-sidebar .ocadyn-sidebar-link:hover {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.14) !important;
+}
+
+aside.ocadyn-sidebar .ocadyn-sidebar-link.is-active {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.22) !important;
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+aside.ocadyn-sidebar .ocadyn-sidebar-muted {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+
+/* Subtle page depth */
+.dashboard-page-bg {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(37, 99, 235, 0.06), transparent),
+    var(--background);
 }

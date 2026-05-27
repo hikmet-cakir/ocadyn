@@ -16,7 +16,7 @@ export function LanguageSwitcher() {
 
   return (
     <div
-      className="inline-flex rounded-lg border border-border bg-card p-1 shadow-sm"
+      className="inline-flex rounded-xl border border-border/80 bg-secondary/80 p-1 shadow-sm"
       role="group"
       aria-label={t('common.language')}
     >
@@ -27,8 +27,10 @@ export function LanguageSwitcher() {
           variant="ghost"
           size="sm"
           className={cn(
-            'h-8 min-w-10 px-2.5 font-semibold',
-            locale === code && 'bg-primary text-primary-foreground hover:bg-primary/90',
+            'h-8 min-w-10 rounded-lg px-3 text-xs font-semibold transition-all duration-200',
+            locale === code
+              ? 'bg-primary text-primary-foreground shadow-sm hover:bg-[var(--primary-hover)]'
+              : 'text-muted-foreground hover:bg-card hover:text-foreground',
           )}
           onClick={() => setLocale(code)}
           aria-pressed={locale === code}

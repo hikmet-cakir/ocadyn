@@ -1,21 +1,25 @@
 import { Badge } from '@/components/ui/badge';
+import { MarketplaceIcon } from '@/components/product/MarketplaceIcon';
 import type { Marketplace } from '@/types/product.types';
-import { marketplaceMeta } from '@/lib/marketplace-meta';
+import { cn } from '@/utils/cn';
 
 interface MarketplaceBadgeProps {
   marketplace: Marketplace;
+  className?: string;
+  size?: 'sm' | 'md';
 }
 
-export function MarketplaceBadge({ marketplace }: MarketplaceBadgeProps) {
-  const meta = marketplaceMeta.find((m) => m.id === marketplace);
-
+export function MarketplaceBadge({ marketplace, className, size = 'md' }: MarketplaceBadgeProps) {
   return (
-    <Badge variant="outline" className="gap-1.5 font-medium">
-      <span
-        className="size-2 rounded-full"
-        style={{ backgroundColor: meta?.color ?? '#5B4DFF' }}
-        aria-hidden
-      />
+    <Badge
+      variant="outline"
+      className={cn(
+        'gap-2 border-border/80 bg-card font-medium text-foreground shadow-sm transition-all duration-200',
+        size === 'sm' ? 'px-2 py-0.5 text-[11px]' : 'px-2.5 py-1 text-xs',
+        className,
+      )}
+    >
+      <MarketplaceIcon marketplace={marketplace} size={size === 'sm' ? 16 : 18} />
       {marketplace}
     </Badge>
   );

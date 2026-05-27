@@ -21,7 +21,9 @@
     "dark": "Koyu",
     "system": "Sistem",
     "ok": "Tamam",
-    "close": "Kapat"
+    "close": "Kapat",
+    "actions": "İşlemler",
+    "viewDetails": "Detayları görüntüle"
   },
   "landing": {
     "heroBadge": "Akıllı fiyat uyarıları",
@@ -190,17 +192,26 @@
     "homeSubtitle": "Fiyatları takip edin, uyarı alın, her alışverişte tasarruf edin.",
     "searchPlaceholder": "Ürün ara…",
     "comingSoon": "Daha fazla seçenek yakında.",
+    "plan": {
+      "free": "Ücretsiz Üye",
+      "pro": "Premium Üye",
+      "enterprise": "Kurumsal Üye"
+    },
     "stats": {
       "total": "Toplam takip",
       "dropped": "Fiyat düştü",
       "increased": "Fiyat arttı",
-      "unchanged": "Değişmedi"
+      "unchanged": "Değişmedi",
+      "totalSubtitle": "Aktif ürünler",
+      "periodSubtitle": "Bu hafta"
     },
     "quickAdd": {
+      "badge": "Fiyat takibi",
       "title": "Ürün takip et",
       "description": "Amazon, Trendyol, N11 veya Walmart ürün URL'si yapıştırın.",
       "placeholder": "https://trendyol.com/…",
       "submit": "Ürünü takip et",
+      "supportedStores": "Desteklenen mağazalar",
       "unsupportedMarketplace": "Bu mağaza henüz desteklenmiyor. Desteklenen mağazalar: Amazon, Trendyol, N11, Walmart."
     },
     "recentProducts": {
@@ -233,6 +244,7 @@
       "empty": "Bu kategoride bildirim yok.",
       "drop": "Fiyat düşüşü",
       "rise": "Fiyat artışı",
+      "update": "Fiyat güncellemesi",
       "tabs": {
         "all": "Tümü",
         "drop": "Düşüşler",
@@ -298,6 +310,7 @@
       "range90d": "90 gün",
       "rangeAll": "Tümü",
       "alertSettings": "Uyarı ayarları",
+      "alertTitle": "Fiyat Alarmı",
       "alertSettingsDesc": "Nasıl ve ne zaman bilgilendirilmek istediğinizi seçin.",
       "notifyVia": "Bildirim kanalları",
       "channels": {
@@ -328,8 +341,14 @@
         "weekly": "Haftalık"
       },
       "saveAlerts": "Uyarıları kaydet",
+      "saveAlert": "Alarmı kaydet",
       "saved": "Uyarı ayarları kaydedildi.",
-      "viewOnStore": "Mağazada gör",
+      "viewOnStore": "Mağazada görüntüle",
+      "share": "Paylaş",
+      "lastUpdated": "Son güncelleme",
+      "today": "Bugün",
+      "productId": "Ürün ID",
+      "downloadCsv": "CSV İndir",
       "favorite": "Favorilere ekle",
       "unfavorite": "Favorilerden çıkar"
     }

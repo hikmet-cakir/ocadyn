@@ -21,7 +21,9 @@
     "dark": "Dark",
     "system": "System",
     "ok": "OK",
-    "close": "Close"
+    "close": "Close",
+    "actions": "Actions",
+    "viewDetails": "View details"
   },
   "landing": {
     "heroBadge": "Smart price alerts",
@@ -190,17 +192,26 @@
     "homeSubtitle": "Track prices, get alerts, and save on every purchase.",
     "searchPlaceholder": "Search products…",
     "comingSoon": "More options coming soon.",
+    "plan": {
+      "free": "Free Member",
+      "pro": "Premium Member",
+      "enterprise": "Enterprise"
+    },
     "stats": {
       "total": "Total tracked",
       "dropped": "Price dropped",
       "increased": "Price increased",
-      "unchanged": "Unchanged"
+      "unchanged": "Unchanged",
+      "totalSubtitle": "Active products",
+      "periodSubtitle": "This week"
     },
     "quickAdd": {
+      "badge": "Price tracking",
       "title": "Track a product",
       "description": "Paste a product URL from Amazon, Trendyol, N11, or Walmart.",
       "placeholder": "https://amazon.com/dp/…",
       "submit": "Track product",
+      "supportedStores": "Supported stores",
       "unsupportedMarketplace": "This store is not supported yet. Supported stores: Amazon, Trendyol, N11, Walmart."
     },
     "recentProducts": {
@@ -233,6 +244,7 @@
       "empty": "No notifications in this category.",
       "drop": "Price drop",
       "rise": "Price increase",
+      "update": "Price update",
       "tabs": {
         "all": "All",
         "drop": "Price drops",
@@ -298,6 +310,7 @@
       "range90d": "90 days",
       "rangeAll": "All time",
       "alertSettings": "Alert settings",
+      "alertTitle": "Price Alert",
       "alertSettingsDesc": "Choose how and when you want to be notified.",
       "notifyVia": "Notify me via",
       "channels": {
@@ -328,8 +341,14 @@
         "weekly": "Weekly"
       },
       "saveAlerts": "Save alert settings",
+      "saveAlert": "Save alert",
       "saved": "Alert settings saved.",
-      "viewOnStore": "View on store",
+      "viewOnStore": "View in store",
+      "share": "Share",
+      "lastUpdated": "Last updated",
+      "today": "Today",
+      "productId": "Product ID",
+      "downloadCsv": "Download CSV",
       "favorite": "Add to favorites",
       "unfavorite": "Remove from favorites"
     }

@@ -1,25 +1,28 @@
+import { MoreVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Switch } from '@/components/ui/switch';
 import { MarketplaceBadge } from '@/components/product/MarketplaceBadge';
 import { useTranslation } from '@/hooks/useTranslation';
 import { productDetailHref } from '@/hooks/useProductIdFromUrl';
 import { useProductsStore } from '@/store/products.store';
 import { formatPercent, formatPrice } from '@/utils/formatters';
-import { cn } from '@/utils/cn';
+import { Badge } from '@/components/ui/badge';
 
 export function RecentProducts() {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const products = useProductsStore((s) => s.products);
   const toggleTracking = useProductsStore((s) => s.toggleTracking);
+  const localeTag = locale === 'tr' ? 'tr-TR' : 'en-US';
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
+    <Card className="overflow-hidden">
+      <CardHeader className="flex flex-row items-center justify-between gap-4 border-b border-border/60 pb-5">
         <div>
-          <CardTitle>{t('dashboard.recentProducts.title')}</CardTitle>
-          <CardDescription>{t('dashboard.recentProducts.description')}</CardDescription>
+          <CardTitle className="text-xl">{t('dashboard.recentProducts.title')}</CardTitle>
+          <CardDescription className="mt-1">{t('dashboard.recentProducts.description')}</CardDescription>
         </div>
-        <Button variant="outline" size="sm" asChild>
+        <Button variant="outline" size="sm" className="h-9 rounded-xl px-4" asChild>
           <a href="/dashboard/products">{t('dashboard.recentProducts.viewAll')}</a>
         </Button>
       </CardHeader>
@@ -27,28 +30,36 @@ export function RecentProducts() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-border text-left text-muted-foreground">
-                <th className="px-6 py-3 font-medium">{t('dashboard.recentProducts.product')}</th>
-                <th className="px-4 py-3 font-medium">{t('dashboard.recentProducts.marketplace')}</th>
-                <th className="px-4 py-3 font-medium">{t('dashboard.recentProducts.price')}</th>
-                <th className="px-4 py-3 font-medium">{t('dashboard.recentProducts.change')}</th>
-                <th className="px-6 py-3 font-medium">{t('dashboard.recentProducts.tracking')}</th>
+              <tr className="border-b border-border/80 bg-secondary/40 text-left text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                <th className="px-6 py-4">{t('dashboard.recentProducts.product')}</th>
+                <th className="px-4 py-4">{t('dashboard.recentProducts.marketplace')}</th>
+                <th className="px-4 py-4">{t('dashboard.recentProducts.price')}</th>
+                <th className="px-4 py-4">{t('dashboard.recentProducts.change')}</th>
+                <th className="px-4 py-4">{t('dashboard.recentProducts.tracking')}</th>
+                <th className="px-4 py-4">
+                  <span className="sr-only">{t('common.actions')}</span>
+                </th>
               </tr>
             </thead>
             <tbody>
               {products.slice(0, 5).map((product) => (
-                <tr key={product.id} className="border-b border-border last:border-0">
+                <tr
+                  key={product.id}
+                  className="group border-b border-border/60 transition-all duration-200 last:border-0 hover:bg-primary-soft/25"
+                >
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <img
-                        src={product.image}
-                        alt=""
-                        className="size-10 rounded-lg object-cover"
-                      />
+                      <div className="size-12 shrink-0 overflow-hidden rounded-xl border border-border/80 bg-secondary p-1 shadow-sm transition-transform duration-200 group-hover:scale-[1.02]">
+                        <img
+                          src={product.image}
+                          alt=""
+                          className="size-full rounded-lg object-cover"
+                        />
+                      </div>
                       <div className="min-w-0">
                         <a
                           href={productDetailHref(product.id)}
-                          className="font-medium hover:text-primary line-clamp-1"
+                          className="line-clamp-1 font-medium text-foreground transition-colors hover:text-primary"
                         >
                           {product.title}
                         </a>
@@ -58,38 +69,42 @@ export function RecentProducts() {
                   <td className="px-4 py-4">
                     <MarketplaceBadge marketplace={product.marketplace} />
                   </td>
-                  <td className="px-4 py-4 font-medium">
-                    {formatPrice(product.currentPrice, product.currency)}
+                  <td className="px-4 py-4 font-semibold text-foreground">
+                    {formatPrice(product.currentPrice, product.currency, localeTag)}
                   </td>
-                  <td
-                    className={cn(
-                      'px-4 py-4 font-medium',
-                      product.changePercent < 0 && 'text-success',
-                      product.changePercent > 0 && 'text-destructive',
-                    )}
-                  >
-                    {formatPercent(product.changePercent)}
-                  </td>
-                  <td className="px-6 py-4">
-                    <button
-                      type="button"
-                      role="switch"
-                      aria-checked={product.trackingStatus === 'active'}
-                      onClick={() => void toggleTracking(product.id)}
-                      className={cn(
-                        'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors',
-                        product.trackingStatus === 'active' ? 'bg-primary' : 'bg-muted',
-                      )}
+                  <td className="px-4 py-4">
+                    <Badge
+                      variant={
+                        product.changePercent < 0
+                          ? 'success'
+                          : product.changePercent > 0
+                            ? 'danger'
+                            : 'muted'
+                      }
+                      className="font-semibold"
                     >
-                      <span
-                        className={cn(
-                          'pointer-events-none inline-block size-5 rounded-full bg-white shadow transition-transform',
-                          product.trackingStatus === 'active'
-                            ? 'translate-x-5'
-                            : 'translate-x-0',
-                        )}
-                      />
-                    </button>
+                      {formatPercent(product.changePercent, localeTag)}
+                    </Badge>
+                  </td>
+                  <td className="px-4 py-4">
+                    <Switch
+                      checked={product.trackingStatus === 'active'}
+                      onCheckedChange={() => void toggleTracking(product.id)}
+                      aria-label={t('dashboard.recentProducts.tracking')}
+                    />
+                  </td>
+                  <td className="px-4 py-4">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="size-8 rounded-lg text-muted-foreground opacity-0 transition-all duration-200 hover:bg-muted hover:text-foreground group-hover:opacity-100"
+                      asChild
+                    >
+                      <a href={productDetailHref(product.id)} aria-label={t('common.viewDetails')}>
+                        <MoreVertical className="size-4" />
+                      </a>
+                    </Button>
                   </td>
                 </tr>
               ))}
@@ -97,7 +112,7 @@ export function RecentProducts() {
           </table>
         </div>
         {products.length === 0 ? (
-          <p className="px-6 py-8 text-center text-muted-foreground">
+          <p className="px-6 py-12 text-center text-muted-foreground">
             {t('dashboard.recentProducts.empty')}
           </p>
         ) : null}
