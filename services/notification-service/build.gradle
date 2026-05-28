@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot'
     id 'io.spring.dependency-management'
+    id 'jacoco'
 }
 
 dependencies {
@@ -22,4 +23,38 @@ springBoot {
 
 bootJar {
     archiveFileName = 'notification-service.jar'
+}
+
+jacoco {
+    toolVersion = '0.8.12'
+}
+
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        html.required = true
+    }
+    classDirectories.setFrom(files(classDirectories.files.collect {
+        fileTree(dir: it, include: ['com/ocadyn/notification/NotificationService.class'])
+    }))
+}
+
+jacocoTestCoverageVerification {
+    dependsOn jacocoTestReport
+    classDirectories.setFrom(jacocoTestReport.classDirectories)
+    violationRules {
+        rule {
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.95
+            }
+        }
+    }
 }
