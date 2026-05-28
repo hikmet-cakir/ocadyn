@@ -9,4 +9,10 @@ dependencies {
 
     compileOnly libs.springBootStarterActuator
     compileOnly libs.springBootStarterDataMongo
+
+    testImplementation libs.springBootStarterTest
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
 }
