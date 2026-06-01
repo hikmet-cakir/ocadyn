@@ -232,7 +232,11 @@
         "all": "All",
         "active": "Active",
         "paused": "Paused"
-      }
+      },
+      "pauseTracking": "Pause",
+      "resumeTracking": "Resume",
+      "statusActive": "Tracking",
+      "statusPaused": "Paused"
     },
     "favorites": {
       "subtitle": "Products you marked as favorites.",

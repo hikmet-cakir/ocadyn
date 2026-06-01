@@ -232,7 +232,11 @@
         "all": "Tümü",
         "active": "Aktif",
         "paused": "Pasif"
-      }
+      },
+      "pauseTracking": "Duraklat",
+      "resumeTracking": "Devam Et",
+      "statusActive": "Takipte",
+      "statusPaused": "Duraklatıldı"
     },
     "favorites": {
       "subtitle": "Favori olarak işaretlediğiniz ürünler.",

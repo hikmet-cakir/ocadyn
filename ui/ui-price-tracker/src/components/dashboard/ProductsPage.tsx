@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Package } from 'lucide-react';
+import { Package, Pause, Play } from 'lucide-react';
 import { EmptyState } from '@/components/common/EmptyState';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -79,25 +79,82 @@ export function ProductsPage() {
         <p className="py-12 text-center text-muted-foreground">{t('dashboard.loading') ?? 'Loading…'}</p>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {products.map((product) => (
-            <Card key={product.id} className="overflow-hidden">
-              <CardContent className="p-0">
-                <a href={productDetailHref(product.id)} className="block">
-                  <img src={product.image} alt="" className="h-40 w-full object-cover" />
-                </a>
-                <div className="space-y-3 p-4">
-                  <div>
-                    <a
-                      href={productDetailHref(product.id)}
-                      className="font-medium hover:text-primary line-clamp-2"
-                    >
-                      {product.title}
+          {products.map((product) => {
+            const isActive = product.trackingStatus === 'active';
+            return (
+              <Card
+                key={product.id}
+                className={cn(
+                  'overflow-hidden border-t-[3px] transition-shadow hover:shadow-md',
+                  isActive ? 'border-t-success' : 'border-t-amber-400',
+                )}
+              >
+                <CardContent className="p-0">
+                  {/* Image with action button overlay */}
+                  <div className="relative">
+                    <a href={productDetailHref(product.id)} className="block">
+                      <img
+                        src={product.image}
+                        alt=""
+                        className={cn(
+                          'h-40 w-full object-cover transition-opacity',
+                          !isActive && 'opacity-60',
+                        )}
+                      />
                     </a>
-                    <div className="mt-2">
-                      <MarketplaceBadge marketplace={product.marketplace} />
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => void toggleTracking(product.id)}
+                      aria-label={isActive
+                        ? t('dashboard.products.pauseTracking')
+                        : t('dashboard.products.resumeTracking')
+                      }
+                      className={cn(
+                        'absolute right-2 top-2 flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-semibold shadow-sm backdrop-blur-sm transition-all',
+                        isActive
+                          ? 'bg-black/55 text-white hover:bg-black/75'
+                          : 'bg-amber-500 text-white hover:bg-amber-600',
+                      )}
+                    >
+                      {isActive ? (
+                        <>
+                          <Pause className="size-3" />
+                          {t('dashboard.products.pauseTracking')}
+                        </>
+                      ) : (
+                        <>
+                          <Play className="size-3" />
+                          {t('dashboard.products.resumeTracking')}
+                        </>
+                      )}
+                    </button>
                   </div>
-                  <div className="flex items-end justify-between">
+
+                  {/* Card body */}
+                  <div className="space-y-3 p-4">
+                    <div>
+                      <a
+                        href={productDetailHref(product.id)}
+                        className="font-medium hover:text-primary line-clamp-2"
+                      >
+                        {product.title}
+                      </a>
+                      <div className="mt-2 flex items-center gap-2">
+                        <MarketplaceBadge marketplace={product.marketplace} />
+                        <span
+                          className={cn(
+                            'rounded-full px-2 py-0.5 text-[11px] font-medium',
+                            isActive
+                              ? 'bg-success/15 text-success'
+                              : 'bg-amber-400/20 text-amber-600',
+                          )}
+                        >
+                          {isActive
+                            ? t('dashboard.products.statusActive')
+                            : t('dashboard.products.statusPaused')}
+                        </span>
+                      </div>
+                    </div>
                     <div>
                       <p className="text-lg font-bold">
                         {formatPrice(product.currentPrice, product.currency)}
@@ -112,30 +169,11 @@ export function ProductsPage() {
                         {formatPercent(product.changePercent)}
                       </p>
                     </div>
-                    <button
-                      type="button"
-                      role="switch"
-                      aria-checked={product.trackingStatus === 'active'}
-                      onClick={() => void toggleTracking(product.id)}
-                      className={cn(
-                        'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors',
-                        product.trackingStatus === 'active' ? 'bg-primary' : 'bg-muted',
-                      )}
-                    >
-                      <span
-                        className={cn(
-                          'pointer-events-none inline-block size-5 rounded-full bg-white shadow transition-transform',
-                          product.trackingStatus === 'active'
-                            ? 'translate-x-5'
-                            : 'translate-x-0',
-                        )}
-                      />
-                    </button>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       )}
 
