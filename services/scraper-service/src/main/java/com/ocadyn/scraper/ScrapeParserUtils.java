@@ -310,7 +310,20 @@ public class ScrapeParserUtils {
                 price = parseLocalizedAmount(text(product, "price"));
             }
             if (price == null) {
+                price = parseAmount(text(product, "displayPriceFloat"));
+            }
+            if (price == null) {
+                price = parseLocalizedAmount(text(product, "displayPrice"));
+            }
+            if (price == null) {
                 price = parseAmount(text(node.path("productMeta"), "price"));
+            }
+            if (image == null) {
+                // n11 stores images as an array: "images":[{"path":"https://n11scdn.akamaized.net/a1/{0}/..."}]
+                JsonNode images = product.path("images");
+                if (images.isArray() && !images.isEmpty()) {
+                    image = normalizeImageUrl(text(images.get(0), "path"), "org");
+                }
             }
             if (image == null) {
                 image = normalizeImageUrl(text(product.path("image"), "path"), "org");
