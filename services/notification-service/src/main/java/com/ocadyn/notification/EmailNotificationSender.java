@@ -52,7 +52,7 @@ public class EmailNotificationSender {
             helper.setFrom(mailProperties.getFrom());
             helper.setTo(to);
             helper.setSubject(subject);
-            helper.setText(body, false);
+            helper.setText(body, true); // HTML email
             mailSender.send(mimeMessage);
             log.info("Sent price alert email to {}", to);
         } catch (Exception ex) {

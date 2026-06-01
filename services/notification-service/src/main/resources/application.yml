@@ -43,6 +43,8 @@ ocadyn:
     from: ${MAIL_FROM:${OCADYN_MAIL_FROM:}}
     host: ${MAIL_HOST:}
     username: ${MAIL_USER:}
+  app:
+    url: ${APP_URL:http://localhost:8080}
 
 management:
   endpoints:

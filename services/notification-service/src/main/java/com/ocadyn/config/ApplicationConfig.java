@@ -11,7 +11,7 @@ import java.util.List;
 
 @Configuration
 @EnableMongoAuditing
-@EnableConfigurationProperties(MailProperties.class)
+@EnableConfigurationProperties({MailProperties.class, AppProperties.class})
 public class ApplicationConfig {
 
     @Bean

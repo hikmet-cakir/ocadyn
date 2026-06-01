@@ -97,6 +97,7 @@ services:
       MAIL_SMTP_STARTTLS: ${MAIL_SMTP_STARTTLS:-true}
       MAIL_SMTP_STARTTLS_REQUIRED: ${MAIL_SMTP_STARTTLS_REQUIRED:-false}
       MAIL_SMTP_SSL: ${MAIL_SMTP_SSL:-false}
+      APP_URL: ${APP_URL:-http://localhost:8080}
       SERVER_PORT: 9091
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9091/actuator/health"]

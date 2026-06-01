@@ -2,6 +2,7 @@ package com.ocadyn.notification;
 
 import com.ocadyn.common.NotificationType;
 import com.ocadyn.common.exception.ApiException;
+import com.ocadyn.config.AppProperties;
 import com.ocadyn.internal.dto.CreatePriceChangeNotificationRequest;
 import com.ocadyn.notification.dto.NotificationResponse;
 import com.ocadyn.user.UserContactRepository;
@@ -21,15 +22,21 @@ public class NotificationService {
     private final AppNotificationRepository notificationRepository;
     private final UserContactRepository userContactRepository;
     private final EmailNotificationSender emailNotificationSender;
+    private final EmailTemplateBuilder emailTemplateBuilder;
+    private final AppProperties appProperties;
 
     public NotificationService(
             AppNotificationRepository notificationRepository,
             UserContactRepository userContactRepository,
-            EmailNotificationSender emailNotificationSender
+            EmailNotificationSender emailNotificationSender,
+            EmailTemplateBuilder emailTemplateBuilder,
+            AppProperties appProperties
     ) {
         this.notificationRepository = notificationRepository;
         this.userContactRepository = userContactRepository;
         this.emailNotificationSender = emailNotificationSender;
+        this.emailTemplateBuilder = emailTemplateBuilder;
+        this.appProperties = appProperties;
     }
 
     public List<NotificationResponse> list(String userId, NotificationType type) {
@@ -67,20 +74,18 @@ public class NotificationService {
                 ? request.type()
                 : resolveTypeFromPrices(previous, next);
 
+        BigDecimal percent = BigDecimal.ZERO;
+        if (previous.compareTo(BigDecimal.ZERO) > 0) {
+            percent = next.subtract(previous)
+                    .divide(previous, 4, RoundingMode.HALF_UP)
+                    .multiply(BigDecimal.valueOf(100))
+                    .abs()
+                    .setScale(1, RoundingMode.HALF_UP);
+        }
+
         String message = request.message();
         if (message == null || message.isBlank()) {
-            if (previous.compareTo(BigDecimal.ZERO) > 0) {
-                BigDecimal percent = next.subtract(previous)
-                        .divide(previous, 4, RoundingMode.HALF_UP)
-                        .multiply(BigDecimal.valueOf(100))
-                        .abs()
-                        .setScale(1, RoundingMode.HALF_UP);
-                message = type == NotificationType.PRICE_DROP
-                        ? "Price dropped by " + percent + "%"
-                        : "Price increased by " + percent + "%";
-            } else {
-                message = "Price update: " + next + " " + request.currency();
-            }
+            message = EmailTemplateBuilder.buildInAppMessage(type, previous, next, request.currency(), percent);
         }
 
         AppNotification notification = new AppNotification();
@@ -98,36 +103,34 @@ public class NotificationService {
         notificationRepository.save(notification);
 
         if (request.sendEmail()) {
-            sendEmailAlert(request, message, previous, next);
+            sendEmailAlert(request, type, previous, next, percent);
         }
     }
 
     private void sendEmailAlert(
             CreatePriceChangeNotificationRequest request,
-            String message,
+            NotificationType type,
             BigDecimal previous,
-            BigDecimal next
+            BigDecimal next,
+            BigDecimal percent
     ) {
+        final String appUrl = appProperties.getUrl();
         userContactRepository.findById(request.userId()).ifPresentOrElse(user -> {
-            String subject = "OCADYN · " + request.productTitle();
-            String body = """
-                    Merhaba %s,
+            String name = user.getName() != null ? user.getName() : user.getEmail();
+            String productId = request.productId();
+            String productTitle = request.productTitle();
+            String currency = request.currency();
 
-                    %s
+            EmailTemplateBuilder.EmailContent email = switch (type) {
+                case PRICE_DROP -> emailTemplateBuilder.buildPriceDrop(
+                        name, productTitle, previous, next, currency, percent, productId, appUrl);
+                case PRICE_INCREASE -> emailTemplateBuilder.buildPriceIncrease(
+                        name, productTitle, previous, next, currency, percent, productId, appUrl);
+                default -> emailTemplateBuilder.buildPriceUpdate(
+                        name, productTitle, next, currency, productId, appUrl);
+            };
 
-                    Önceki fiyat: %s %s
-                    Güncel fiyat: %s %s
-
-                    — OCADYN Fiyat Takip
-                    """.formatted(
-                    user.getName() != null ? user.getName() : user.getEmail(),
-                    message,
-                    previous,
-                    request.currency(),
-                    next,
-                    request.currency()
-            );
-            emailNotificationSender.send(user.getEmail(), subject, body);
+            emailNotificationSender.send(user.getEmail(), email.subject(), email.htmlBody());
         }, () -> log.warn("User {} not found for email alert on product {}", request.userId(), request.productId()));
     }
 
