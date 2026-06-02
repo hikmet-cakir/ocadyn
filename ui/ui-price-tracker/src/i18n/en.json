@@ -256,13 +256,57 @@
       }
     },
     "reports": {
-      "subtitle": "Savings overview and analytics.",
-      "avgSavings": "Average savings",
-      "totalAlerts": "Total alerts",
-      "topMarketplace": "Top marketplace",
-      "successRate": "Alert success rate",
-      "chartTitle": "Savings over time",
-      "savings": "Savings"
+      "subtitle": "A summary of price movements across your tracked products.",
+      "totalDropTitle": "Total price drop",
+      "totalDropDescription": "Across {{count}} products, the current price fell below the highest level observed since tracking started.",
+      "monthTrendMore": "{{amount}} more drop observed vs last month",
+      "monthTrendLess": "{{amount}} less drop observed vs last month",
+      "biggestDrop": "Biggest drop",
+      "biggestIncrease": "Biggest increase",
+      "stableProducts": "Stable-price products",
+      "stableProductsHint": "Price unchanged or increased",
+      "noDropYet": "No recorded drop yet",
+      "noIncreaseYet": "No recorded increase yet",
+      "chartTitle": "Monthly observed drops",
+      "chartSubtitle": "Total recorded price drops in the selected period",
+      "chartNote": "This is not a purchase or savings total — it shows the sum of recorded price drops across tracked products.",
+      "chartEmpty": "No recorded price drops in the selected period.",
+      "priceDrop": "Price drop",
+      "periods": {
+        "3": "Last 3 months",
+        "6": "Last 6 months",
+        "12": "Last 12 months"
+      },
+      "productListTitle": "Product price movements",
+      "productListSubtitle": "Drop, rise, and stable-price status across tracked products",
+      "viewAllProducts": "View all",
+      "tabs": {
+        "dropped": "Dropped",
+        "increased": "Increased",
+        "stable": "Stable"
+      },
+      "tabEmpty": {
+        "dropped": "No products with a price drop yet.",
+        "increased": "No products with a price increase yet.",
+        "stable": "No stable-price products found."
+      },
+      "columns": {
+        "product": "Product",
+        "range": "Peak → Current",
+        "rangeLow": "Lowest → Current",
+        "change": "Change",
+        "lastDrop": "Last drop"
+      },
+      "noChange": "Unchanged",
+      "noDropRecorded": "No record",
+      "notificationsTitle": "Notification summary",
+      "notificationsSent": "{{total}} alerts sent",
+      "notificationsDrops": "{{count}} recorded a price drop",
+      "topMarketplaceDetail": "Most tracked: {{marketplace}} ({{count}} products)",
+      "emptyTitle": "No price movement yet",
+      "emptyDescription": "When you add products and prices move, you'll see the details here.",
+      "emptyAction": "Add a product",
+      "error": "Could not load reports"
     },
     "settings": {
       "subtitle": "Profile, notifications, security, and appearance.",

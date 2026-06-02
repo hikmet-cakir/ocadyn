@@ -97,17 +97,34 @@ export interface ApiUnreadCountResponse {
   count: number;
 }
 
-export interface ApiSavingsChartPoint {
-  month: string;
-  savings: number;
+export interface ApiPriceDropChartPoint {
+  month: number;
+  year: number;
+  amount: number;
+}
+
+export interface ApiProductMovementHighlight {
+  productId: string;
+  title: string;
+  marketplace: ApiMarketplace;
+  currency: string;
+  amount: number;
+  percent: number;
 }
 
 export interface ApiReportSummaryResponse {
-  averageSavings: number;
+  totalPriceDrop: number;
+  productsWithDropCount: number;
+  monthOverMonthDropChange: number;
+  displayCurrency: string;
+  biggestDrop: ApiProductMovementHighlight | null;
+  biggestIncrease: ApiProductMovementHighlight | null;
+  stablePriceProductCount: number;
   totalNotifications: number;
+  priceDropNotificationCount: number;
   mostTrackedMarketplace: ApiMarketplace | null;
-  alertSuccessRate: number;
-  savingsChart: ApiSavingsChartPoint[];
+  mostTrackedMarketplaceCount: number;
+  priceDropChart: ApiPriceDropChartPoint[];
 }
 
 export interface ApiErrorBody {

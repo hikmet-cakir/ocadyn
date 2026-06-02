@@ -256,13 +256,57 @@
       }
     },
     "reports": {
-      "subtitle": "Tasarruf özeti ve analizler.",
-      "avgSavings": "Ortalama tasarruf",
-      "totalAlerts": "Toplam uyarı",
-      "topMarketplace": "En çok takip",
-      "successRate": "Uyarı başarı oranı",
-      "chartTitle": "Zaman içinde tasarruf",
-      "savings": "Tasarruf"
+      "subtitle": "Takip ettiğin ürünlerdeki fiyat değişimlerinin özeti.",
+      "totalDropTitle": "Toplam fiyat düşüşü",
+      "totalDropDescription": "{{count}} üründe fiyat, takip başlangıcından bu yana en yüksek seviyesinin altına indi.",
+      "monthTrendMore": "Geçen aya göre {{amount}} daha fazla düşüş gözlendi",
+      "monthTrendLess": "Geçen aya göre {{amount}} daha az düşüş gözlendi",
+      "biggestDrop": "En büyük düşüş",
+      "biggestIncrease": "En yüksek artış",
+      "stableProducts": "Sabit fiyatlı ürünler",
+      "stableProductsHint": "Fiyat değişmedi veya yükseldi",
+      "noDropYet": "Henüz kayıtlı düşüş yok",
+      "noIncreaseYet": "Henüz kayıtlı artış yok",
+      "chartTitle": "Aylık gözlemlenen düşüşler",
+      "chartSubtitle": "Seçilen dönemde kaydedilen fiyat düşüşlerinin toplamı",
+      "chartNote": "Bu grafik satın alma değildir; takip ettiğin ürünlerde kaydedilen fiyat düşüşlerinin toplamını gösterir.",
+      "chartEmpty": "Seçilen dönemde kayıtlı fiyat düşüşü yok.",
+      "priceDrop": "Fiyat düşüşü",
+      "periods": {
+        "3": "Son 3 ay",
+        "6": "Son 6 ay",
+        "12": "Son 1 yıl"
+      },
+      "productListTitle": "Ürün fiyat hareketleri",
+      "productListSubtitle": "Takip ettiğin ürünlerdeki düşüş, artış ve sabit fiyat durumları",
+      "viewAllProducts": "Tümünü gör",
+      "tabs": {
+        "dropped": "Düşen",
+        "increased": "Yükselen",
+        "stable": "Sabit"
+      },
+      "tabEmpty": {
+        "dropped": "Henüz fiyatı düşen ürün yok.",
+        "increased": "Henüz fiyatı yükselen ürün yok.",
+        "stable": "Sabit fiyatlı ürün bulunmuyor."
+      },
+      "columns": {
+        "product": "Ürün",
+        "range": "En yüksek → Güncel",
+        "rangeLow": "En düşük → Güncel",
+        "change": "Fark",
+        "lastDrop": "Son düşüş"
+      },
+      "noChange": "Değişmedi",
+      "noDropRecorded": "Kayıt yok",
+      "notificationsTitle": "Bildirim özeti",
+      "notificationsSent": "{{total}} uyarı gönderildi",
+      "notificationsDrops": "{{count}} tanesinde fiyat düşüşü kaydedildi",
+      "topMarketplaceDetail": "En çok takip: {{marketplace}} ({{count}} ürün)",
+      "emptyTitle": "Henüz fiyat hareketi yok",
+      "emptyDescription": "Ürün eklediğinde fiyat düştüğünde veya yükseldiğinde burada göreceksin.",
+      "emptyAction": "Ürün ekle",
+      "error": "Raporlar yüklenemedi"
     },
     "settings": {
       "subtitle": "Profil, bildirimler, güvenlik ve görünüm.",

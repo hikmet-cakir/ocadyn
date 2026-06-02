@@ -15,9 +15,12 @@ public class TrackedProductDocument {
     @Id
     private String id;
     private String userId;
+    private String title;
     private Marketplace marketplace;
     private BigDecimal currentPrice = BigDecimal.ZERO;
+    private BigDecimal lowestPrice = BigDecimal.ZERO;
     private BigDecimal highestPrice = BigDecimal.ZERO;
+    private String currency = "USD";
     private List<PricePointDocument> priceHistory = new ArrayList<>();
 
     public String getId() {
@@ -28,6 +31,10 @@ public class TrackedProductDocument {
         return userId;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
     public Marketplace getMarketplace() {
         return marketplace;
     }
@@ -36,8 +43,16 @@ public class TrackedProductDocument {
         return currentPrice;
     }
 
+    public BigDecimal getLowestPrice() {
+        return lowestPrice;
+    }
+
     public BigDecimal getHighestPrice() {
         return highestPrice;
+    }
+
+    public String getCurrency() {
+        return currency;
     }
 
     public List<PricePointDocument> getPriceHistory() {

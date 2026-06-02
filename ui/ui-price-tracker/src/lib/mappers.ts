@@ -168,15 +168,95 @@ export function mapNotification(notification: ApiNotificationResponse): AppNotif
   };
 }
 
-export function mapReportSummary(summary: ApiReportSummaryResponse) {
+function mapMovementHighlight(
+  highlight: ApiReportSummaryResponse['biggestDrop'],
+): ReportMovementHighlight | null {
+  if (!highlight) return null;
   return {
-    averageSavings: summary.averageSavings,
-    totalNotifications: summary.totalNotifications,
-    mostTrackedMarketplace: mapMarketplaceLabel(summary.mostTrackedMarketplace),
-    alertSuccessRate: summary.alertSuccessRate,
-    savingsChart: summary.savingsChart.map((point) => ({ ...point })),
+    productId: highlight.productId,
+    title: highlight.title,
+    marketplace: mapMarketplaceLabel(highlight.marketplace),
+    currency: highlight.currency,
+    amount: highlight.amount,
+    percent: highlight.percent,
   };
 }
+
+const LEGACY_MONTH_INDEX: Record<string, number> = {
+  JAN: 1,
+  FEB: 2,
+  MAR: 3,
+  APR: 4,
+  MAY: 5,
+  JUN: 6,
+  JUL: 7,
+  AUG: 8,
+  SEP: 9,
+  OCT: 10,
+  NOV: 11,
+  DEC: 12,
+};
+
+type LegacyReportPayload = {
+  averageSavings?: number;
+  alertSuccessRate?: number;
+  savingsChart?: Array<{ month: string; savings: number }>;
+};
+
+function mapLegacyPriceDropChart(
+  points: Array<{ month: string; savings: number }>,
+): Array<{ month: number; year: number; amount: number }> {
+  const year = new Date().getFullYear();
+  return points.map((point) => ({
+    month: LEGACY_MONTH_INDEX[point.month.toUpperCase().slice(0, 3)] ?? 1,
+    year,
+    amount: point.savings ?? 0,
+  }));
+}
+
+export function mapReportSummary(
+  summary: ApiReportSummaryResponse & LegacyReportPayload,
+) {
+  if (summary.priceDropChart == null && summary.savingsChart != null) {
+    const priceDropChart = mapLegacyPriceDropChart(summary.savingsChart);
+    const totalNotifications = summary.totalNotifications ?? 0;
+    const alertSuccessRate = summary.alertSuccessRate ?? 0;
+
+    return {
+      totalPriceDrop: priceDropChart.reduce((sum, point) => sum + point.amount, 0),
+      productsWithDropCount: 0,
+      monthOverMonthDropChange: 0,
+      displayCurrency: 'USD',
+      biggestDrop: null,
+      biggestIncrease: null,
+      stablePriceProductCount: 0,
+      totalNotifications,
+      priceDropNotificationCount: Math.round((alertSuccessRate * totalNotifications) / 100),
+      mostTrackedMarketplace: mapMarketplaceLabel(summary.mostTrackedMarketplace ?? null),
+      mostTrackedMarketplaceCount: 0,
+      priceDropChart,
+    };
+  }
+
+  return {
+    totalPriceDrop: summary.totalPriceDrop ?? 0,
+    productsWithDropCount: summary.productsWithDropCount ?? 0,
+    monthOverMonthDropChange: summary.monthOverMonthDropChange ?? 0,
+    displayCurrency: summary.displayCurrency ?? 'USD',
+    biggestDrop: mapMovementHighlight(summary.biggestDrop ?? null),
+    biggestIncrease: mapMovementHighlight(summary.biggestIncrease ?? null),
+    stablePriceProductCount: summary.stablePriceProductCount ?? 0,
+    totalNotifications: summary.totalNotifications ?? 0,
+    priceDropNotificationCount: summary.priceDropNotificationCount ?? 0,
+    mostTrackedMarketplace: mapMarketplaceLabel(summary.mostTrackedMarketplace ?? null),
+    mostTrackedMarketplaceCount: summary.mostTrackedMarketplaceCount ?? 0,
+    priceDropChart: (summary.priceDropChart ?? []).map((point) => ({ ...point })),
+  };
+}
+
+export type ReportMovementHighlight = NonNullable<
+  ReturnType<typeof mapMovementHighlight>
+>;
 
 export type ReportSummary = ReturnType<typeof mapReportSummary>;
 

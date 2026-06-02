@@ -24,7 +24,7 @@ public class ReportController {
     }
 
     @GetMapping("/summary")
-    @Operation(summary = "Savings and analytics summary")
+    @Operation(summary = "Price movement and analytics summary")
     public ReportSummaryResponse summary() {
         return reportService.getSummary(currentUserResolver.requireUserId());
     }

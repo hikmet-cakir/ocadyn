@@ -2,8 +2,9 @@ package com.ocadyn.report;
 
 import com.ocadyn.common.Marketplace;
 import com.ocadyn.common.NotificationType;
+import com.ocadyn.report.dto.PriceDropChartPoint;
+import com.ocadyn.report.dto.ProductMovementHighlight;
 import com.ocadyn.report.dto.ReportSummaryResponse;
-import com.ocadyn.report.dto.SavingsDataPoint;
 import com.ocadyn.report.model.NotificationDocument;
 import com.ocadyn.report.model.TrackedProductDocument;
 import org.springframework.data.domain.Sort;
@@ -15,13 +16,15 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
-import java.time.Month;
+import java.time.YearMonth;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class ReportService {
@@ -45,73 +48,183 @@ public class ReportService {
                 NotificationDocument.class
         );
 
-        long totalAlerts = notifications.size();
+        BigDecimal totalPriceDrop = BigDecimal.ZERO;
+        int productsWithDropCount = 0;
+        int stablePriceProductCount = 0;
+        TrackedProductDocument biggestDropProduct = null;
+        BigDecimal biggestDropAmount = BigDecimal.ZERO;
+        TrackedProductDocument biggestIncreaseProduct = null;
+        BigDecimal biggestIncreaseAmount = BigDecimal.ZERO;
+        Map<String, Long> currencyCounts = new HashMap<>();
 
-        BigDecimal averageSavings = products.stream()
-                .map(this::estimateSavings)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        if (!products.isEmpty()) {
-            averageSavings = averageSavings.divide(BigDecimal.valueOf(products.size()), 2, RoundingMode.HALF_UP);
+        for (TrackedProductDocument product : products) {
+            String currency = product.getCurrency() == null ? "USD" : product.getCurrency();
+            currencyCounts.merge(currency, 1L, Long::sum);
+
+            BigDecimal drop = estimateDrop(product);
+            if (drop.compareTo(BigDecimal.ZERO) > 0) {
+                totalPriceDrop = totalPriceDrop.add(drop);
+                productsWithDropCount++;
+                if (drop.compareTo(biggestDropAmount) > 0) {
+                    biggestDropAmount = drop;
+                    biggestDropProduct = product;
+                }
+            } else {
+                stablePriceProductCount++;
+            }
+
+            BigDecimal increase = estimateIncrease(product);
+            if (increase.compareTo(BigDecimal.ZERO) > 0 && increase.compareTo(biggestIncreaseAmount) > 0) {
+                biggestIncreaseAmount = increase;
+                biggestIncreaseProduct = product;
+            }
         }
 
-        Marketplace topMarketplace = products.stream()
-                .collect(() -> new EnumMap<Marketplace, Long>(Marketplace.class),
-                        (map, p) -> map.merge(p.getMarketplace(), 1L, Long::sum),
-                        (a, b) -> b.forEach((k, v) -> a.merge(k, v, Long::sum)))
-                .entrySet().stream()
+        String displayCurrency = currencyCounts.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse("USD");
+
+        Map<Marketplace, Long> marketplaceCounts = new EnumMap<>(Marketplace.class);
+        for (TrackedProductDocument product : products) {
+            marketplaceCounts.merge(product.getMarketplace(), 1L, Long::sum);
+        }
+        Marketplace topMarketplace = marketplaceCounts.entrySet().stream()
                 .max(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey)
                 .orElse(Marketplace.OTHER);
+        int mostTrackedMarketplaceCount = marketplaceCounts.getOrDefault(topMarketplace, 0L).intValue();
 
-        long successfulDrops = notifications.stream()
+        long totalAlerts = notifications.size();
+        long priceDropNotifications = notifications.stream()
                 .filter(n -> n.getType() == NotificationType.PRICE_DROP)
                 .count();
-        int successRate = totalAlerts == 0 ? 0 : (int) Math.min(100, (successfulDrops * 100) / totalAlerts);
+
+        YearMonth currentMonth = YearMonth.now(ZoneOffset.UTC);
+        YearMonth previousMonth = currentMonth.minusMonths(1);
+        BigDecimal currentMonthDrops = computeMonthlyDrops(products, currentMonth);
+        BigDecimal previousMonthDrops = computeMonthlyDrops(products, previousMonth);
+        BigDecimal monthOverMonthDropChange = currentMonthDrops.subtract(previousMonthDrops);
 
         return new ReportSummaryResponse(
-                averageSavings,
+                totalPriceDrop.setScale(2, RoundingMode.HALF_UP),
+                productsWithDropCount,
+                monthOverMonthDropChange.setScale(2, RoundingMode.HALF_UP),
+                displayCurrency,
+                toHighlight(biggestDropProduct, biggestDropAmount, true),
+                toHighlight(biggestIncreaseProduct, biggestIncreaseAmount, false),
+                stablePriceProductCount,
                 totalAlerts,
+                priceDropNotifications,
                 topMarketplace.name(),
-                successRate,
-                buildSavingsChart(products)
+                mostTrackedMarketplaceCount,
+                buildPriceDropChart(products)
         );
     }
 
-    private BigDecimal estimateSavings(TrackedProductDocument product) {
+    private BigDecimal estimateDrop(TrackedProductDocument product) {
         if (product.getHighestPrice().compareTo(product.getCurrentPrice()) <= 0) {
             return BigDecimal.ZERO;
         }
         return product.getHighestPrice().subtract(product.getCurrentPrice()).max(BigDecimal.ZERO);
     }
 
-    private List<SavingsDataPoint> buildSavingsChart(List<TrackedProductDocument> products) {
-        Map<Month, BigDecimal> byMonth = new EnumMap<>(Month.class);
-        for (TrackedProductDocument product : products) {
-            product.getPriceHistory().stream()
-                    .sorted(Comparator.comparing(p -> p.getDate() == null ? Instant.EPOCH : p.getDate()))
-                    .reduce((first, second) -> {
-                        if (first.getPrice().compareTo(second.getPrice()) > 0) {
-                            Month month = second.getDate().atZone(ZoneOffset.UTC).getMonth();
-                            byMonth.merge(month, first.getPrice().subtract(second.getPrice()), BigDecimal::add);
-                        }
-                        return second;
-                    });
+    private BigDecimal estimateIncrease(TrackedProductDocument product) {
+        if (product.getLowestPrice().compareTo(BigDecimal.ZERO) <= 0) {
+            return BigDecimal.ZERO;
+        }
+        if (product.getCurrentPrice().compareTo(product.getLowestPrice()) <= 0) {
+            return BigDecimal.ZERO;
+        }
+        return product.getCurrentPrice().subtract(product.getLowestPrice()).max(BigDecimal.ZERO);
+    }
+
+    private ProductMovementHighlight toHighlight(
+            TrackedProductDocument product,
+            BigDecimal amount,
+            boolean drop
+    ) {
+        if (product == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            return null;
         }
 
-        List<SavingsDataPoint> chart = new ArrayList<>();
-        Month[] recent = {Month.JANUARY, Month.FEBRUARY, Month.MARCH, Month.APRIL, Month.MAY, Month.JUNE};
-        for (Month month : recent) {
-            chart.add(new SavingsDataPoint(month.name().substring(0, 3), byMonth.getOrDefault(month, BigDecimal.ZERO)));
+        BigDecimal percent;
+        if (drop) {
+            percent = percentChange(amount, product.getHighestPrice());
+        } else {
+            percent = percentChange(amount, product.getLowestPrice());
         }
-        if (chart.stream().allMatch(p -> p.savings().compareTo(BigDecimal.ZERO) == 0)) {
-            return List.of(
-                    new SavingsDataPoint("Jan", BigDecimal.valueOf(42)),
-                    new SavingsDataPoint("Feb", BigDecimal.valueOf(68)),
-                    new SavingsDataPoint("Mar", BigDecimal.valueOf(55)),
-                    new SavingsDataPoint("Apr", BigDecimal.valueOf(91)),
-                    new SavingsDataPoint("May", BigDecimal.valueOf(74)),
-                    new SavingsDataPoint("Jun", BigDecimal.valueOf(120))
-            );
+
+        return new ProductMovementHighlight(
+                product.getId(),
+                Objects.toString(product.getTitle(), "Product"),
+                product.getMarketplace().name(),
+                product.getCurrency() == null ? "USD" : product.getCurrency(),
+                amount.setScale(2, RoundingMode.HALF_UP),
+                percent
+        );
+    }
+
+    private BigDecimal percentChange(BigDecimal delta, BigDecimal base) {
+        if (base.compareTo(BigDecimal.ZERO) <= 0) {
+            return BigDecimal.ZERO;
+        }
+        return delta.multiply(BigDecimal.valueOf(100))
+                .divide(base, 1, RoundingMode.HALF_UP);
+    }
+
+    private BigDecimal computeMonthlyDrops(List<TrackedProductDocument> products, YearMonth month) {
+        BigDecimal total = BigDecimal.ZERO;
+        for (TrackedProductDocument product : products) {
+            total = total.add(sumDropsInMonth(product, month));
+        }
+        return total;
+    }
+
+    private BigDecimal sumDropsInMonth(TrackedProductDocument product, YearMonth month) {
+        BigDecimal total = BigDecimal.ZERO;
+        List<TrackedProductDocument.PricePointDocument> history = product.getPriceHistory().stream()
+                .sorted(Comparator.comparing(p -> p.getDate() == null ? Instant.EPOCH : p.getDate()))
+                .toList();
+
+        for (int i = 1; i < history.size(); i++) {
+            TrackedProductDocument.PricePointDocument previous = history.get(i - 1);
+            TrackedProductDocument.PricePointDocument current = history.get(i);
+            if (previous.getPrice().compareTo(current.getPrice()) <= 0 || current.getDate() == null) {
+                continue;
+            }
+            YearMonth pointMonth = YearMonth.from(current.getDate().atZone(ZoneOffset.UTC));
+            if (pointMonth.equals(month)) {
+                total = total.add(previous.getPrice().subtract(current.getPrice()));
+            }
+        }
+        return total;
+    }
+
+    private List<PriceDropChartPoint> buildPriceDropChart(List<TrackedProductDocument> products) {
+        Map<YearMonth, BigDecimal> byMonth = new HashMap<>();
+        for (TrackedProductDocument product : products) {
+            List<TrackedProductDocument.PricePointDocument> history = product.getPriceHistory().stream()
+                    .sorted(Comparator.comparing(p -> p.getDate() == null ? Instant.EPOCH : p.getDate()))
+                    .toList();
+
+            for (int i = 1; i < history.size(); i++) {
+                TrackedProductDocument.PricePointDocument previous = history.get(i - 1);
+                TrackedProductDocument.PricePointDocument current = history.get(i);
+                if (previous.getPrice().compareTo(current.getPrice()) <= 0 || current.getDate() == null) {
+                    continue;
+                }
+                YearMonth month = YearMonth.from(current.getDate().atZone(ZoneOffset.UTC));
+                byMonth.merge(month, previous.getPrice().subtract(current.getPrice()), BigDecimal::add);
+            }
+        }
+
+        YearMonth now = YearMonth.now(ZoneOffset.UTC);
+        List<PriceDropChartPoint> chart = new ArrayList<>();
+        for (int i = 11; i >= 0; i--) {
+            YearMonth month = now.minusMonths(i);
+            BigDecimal amount = byMonth.getOrDefault(month, BigDecimal.ZERO).setScale(2, RoundingMode.HALF_UP);
+            chart.add(new PriceDropChartPoint(month.getMonthValue(), month.getYear(), amount));
         }
         return chart;
     }
