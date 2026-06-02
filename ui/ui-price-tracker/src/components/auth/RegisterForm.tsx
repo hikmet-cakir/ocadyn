@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useGuestRedirect } from '@/hooks/useGuestRedirect';
-import { Hexagon } from 'lucide-react';
+import { AppLogo } from '@/components/common/AppLogo';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,7 +14,6 @@ import {
 import { useTranslation } from '@/hooks/useTranslation';
 import { ApiError } from '@/lib/api-client';
 import { useAuthStore } from '@/store/auth.store';
-import { APP_NAME } from '@/utils/constants';
 
 export function RegisterForm() {
   const { t } = useTranslation();
@@ -65,11 +64,8 @@ export function RegisterForm() {
 
   return (
     <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-4 py-12">
-      <div className="mb-8 flex items-center justify-center gap-2">
-        <div className="flex size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-          <Hexagon className="size-6" aria-hidden />
-        </div>
-        <span className="font-display text-2xl font-bold">{APP_NAME}</span>
+      <div className="mb-8 flex justify-center">
+        <AppLogo variant="full" />
       </div>
 
       <Card>

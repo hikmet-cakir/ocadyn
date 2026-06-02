@@ -1,4 +1,4 @@
-import { Hexagon } from 'lucide-react';
+import { AppLogo } from '@/components/common/AppLogo';
 import { useTranslation } from '@/hooks/useTranslation';
 import { APP_NAME, MARKETPLACES } from '@/utils/constants';
 
@@ -11,12 +11,7 @@ export function LandingFooter() {
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid gap-8 md:grid-cols-4">
           <div className="md:col-span-2">
-            <div className="flex items-center gap-2">
-              <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                <Hexagon className="size-4" aria-hidden />
-              </div>
-              <span className="font-display text-lg font-bold">{APP_NAME}</span>
-            </div>
+            <AppLogo variant="wordmark" />
             <p className="mt-3 max-w-sm text-sm text-muted-foreground">{t('app.tagline')}</p>
           </div>
           <div>

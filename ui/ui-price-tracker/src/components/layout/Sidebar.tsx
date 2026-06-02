@@ -1,9 +1,8 @@
-import { ChevronLeft, ChevronUp, Hexagon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { ChevronLeft, ChevronUp } from 'lucide-react';
+import { AppLogo, AppLogoMark } from '@/components/common/AppLogo';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useAppStore } from '@/store/app.store';
 import { useAuthStore } from '@/store/auth.store';
-import { APP_NAME } from '@/utils/constants';
 import { dashboardNavItems, isNavActive } from '@/utils/navigation';
 import { cn } from '@/utils/cn';
 
@@ -38,13 +37,12 @@ export function Sidebar({ pathname }: SidebarProps) {
       }}
     >
       <div className="flex h-[72px] items-center justify-between border-b border-white/15 px-4">
-        <a href="/dashboard" className="flex items-center gap-3 overflow-hidden !text-white">
-          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-white/15 shadow-[0_4px_12px_rgba(0,0,0,0.15)]">
-            <Hexagon className="size-5 !text-white" aria-hidden />
-          </div>
-          {!collapsed ? (
-            <span className="font-display text-lg font-bold tracking-tight !text-white">{APP_NAME}</span>
-          ) : null}
+        <a href="/dashboard" className="flex items-center overflow-hidden">
+          {collapsed ? (
+            <AppLogoMark className="size-10" tone="on-dark" />
+          ) : (
+            <AppLogo variant="wordmark" tone="on-dark" />
+          )}
         </a>
         <button
           type="button"

@@ -1,4 +1,5 @@
 import { ChevronRight, LogOut, Search } from 'lucide-react';
+import { AppLogoMark } from '@/components/common/AppLogo';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
@@ -31,7 +32,10 @@ export function Topbar({ title, breadcrumbs }: TopbarProps) {
 
   return (
     <header className="sticky top-0 z-30 flex h-[72px] items-center gap-4 border-b border-border/80 bg-card/95 px-4 backdrop-blur-xl sm:px-6 lg:px-8">
-      <div className="min-w-0 shrink-0 sm:max-w-[280px]">
+      <div className="flex min-w-0 shrink-0 items-center gap-3 sm:max-w-[280px]">
+        <a href="/dashboard" className="shrink-0 md:hidden" aria-label="OCADYN">
+          <AppLogoMark className="size-9" />
+        </a>
         {showBreadcrumbs ? (
           <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1.5 text-sm">
             {breadcrumbs.map((item, index) => {

@@ -4,13 +4,13 @@ import {
   BarChart3,
   Bell,
   ChevronDown,
-  Hexagon,
   Link2,
   Shield,
   Sparkles,
   TrendingDown,
   Zap,
 } from 'lucide-react';
+import { AppLogoMark } from '@/components/common/AppLogo';
 import { LandingFooter } from '@/components/landing/LandingFooter';
 import { LandingHeader } from '@/components/landing/LandingHeader';
 import { Button } from '@/components/ui/button';
@@ -149,7 +149,7 @@ export function LandingPage() {
               </div>
               <Card className="overflow-hidden shadow-xl">
                 <div className="flex items-center gap-2 border-b border-border bg-sidebar px-4 py-3">
-                  <Hexagon className="size-5 text-sidebar-foreground" />
+                  <AppLogoMark className="size-8" tone="on-dark" />
                   <span className="text-sm font-semibold text-sidebar-foreground">
                     {APP_NAME} Dashboard
                   </span>
