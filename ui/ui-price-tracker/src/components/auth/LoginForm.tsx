@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useGuestRedirect } from '@/hooks/useGuestRedirect';
 import { Hexagon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,11 +27,20 @@ function getRedirectPath(): string {
 
 export function LoginForm() {
   const { t } = useTranslation();
+  const { shouldRender } = useGuestRedirect();
   const login = useAuthStore((s) => s.login);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  if (!shouldRender) {
+    return (
+      <div className="flex min-h-screen items-center justify-center text-muted-foreground">
+        Loading…
+      </div>
+    );
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useGuestRedirect } from '@/hooks/useGuestRedirect';
 import {
   BarChart3,
   Bell,
@@ -16,7 +17,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useTranslation } from '@/hooks/useTranslation';
-import { useAuthStore } from '@/store/auth.store';
 import { APP_NAME, MARKETPLACES } from '@/utils/constants';
 import { cn } from '@/utils/cn';
 
@@ -28,11 +28,16 @@ const faqKeys = ['account', 'track', 'alerts', 'pricing'] as const;
 
 export function LandingPage() {
   const { t } = useTranslation();
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const isHydrated = useAuthStore((s) => s.isHydrated);
+  const { shouldRender } = useGuestRedirect();
   const [openFaq, setOpenFaq] = useState<string | null>('account');
 
-  const dashboardHref = isHydrated && isAuthenticated ? '/dashboard' : '/login';
+  if (!shouldRender) {
+    return (
+      <div className="flex min-h-screen items-center justify-center text-muted-foreground">
+        Loading…
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -62,7 +67,7 @@ export function LandingPage() {
                 <a href="/register">{t('common.getStarted')}</a>
               </Button>
               <Button asChild size="lg" variant="outline">
-                <a href={dashboardHref}>{t('common.viewDashboard')}</a>
+                <a href="/login">{t('common.viewDashboard')}</a>
               </Button>
             </div>
           </div>

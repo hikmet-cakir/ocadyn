@@ -12,6 +12,7 @@ export function LandingHeader() {
   const isHydrated = useAuthStore((s) => s.isHydrated);
 
   const dashboardHref = isHydrated && isAuthenticated ? '/dashboard' : '/login';
+  const getStartedHref = isHydrated && isAuthenticated ? '/dashboard' : '/register';
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-md">
@@ -42,7 +43,7 @@ export function LandingHeader() {
             <a href={dashboardHref}>{t('auth.login.submit')}</a>
           </Button>
           <Button size="sm" asChild>
-            <a href="/register">{t('common.getStarted')}</a>
+            <a href={getStartedHref}>{t('common.getStarted')}</a>
           </Button>
         </div>
       </div>

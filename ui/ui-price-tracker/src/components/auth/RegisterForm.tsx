@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useGuestRedirect } from '@/hooks/useGuestRedirect';
 import { Hexagon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,6 +18,7 @@ import { APP_NAME } from '@/utils/constants';
 
 export function RegisterForm() {
   const { t } = useTranslation();
+  const { shouldRender } = useGuestRedirect();
   const register = useAuthStore((s) => s.register);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -24,6 +26,14 @@ export function RegisterForm() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  if (!shouldRender) {
+    return (
+      <div className="flex min-h-screen items-center justify-center text-muted-foreground">
+        Loading…
+      </div>
+    );
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
